@@ -6,7 +6,7 @@
 #    By: cmenke <cmenke@student.42wolfsburg.de>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/08 21:07:24 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/08 21:31:49 by cmenke           ###   ########.fr        #
+#    Updated: 2023/04/08 23:23:21 by cmenke           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,25 +22,37 @@ OBJS := ${SRCS:.c=.o}
 
 HEADER := ${SRCDIR}/so_long.h
 
+LIBFTDIR := libft
+
+LIBFT := libft.a
+
+INCLUDE := -l:${LIBFT} -L${LIBFTDIR}
+
 # CFLAGS := -Wall -Werror -Wextra
 
 CC := cc
 
 RM := rm -f
 
-all: ${NAME}
+all: library ${NAME}
+
+library:
+	make -C ${LIBFTDIR}
 
 ${NAME}: ${OBJS}
-	${CC} ${CFLAGS} ${OBJS} -o ${NAME}
+	${CC} ${CFLAGS} ${INCLUDE} ${OBJS} -o ${NAME}
+
 
 ${OBJS}: ${HEADER}
 
 clean:
 	${RM} ${OBJS}
+	make clean -C ${LIBFTDIR}
 
 fclean: clean
 	${RM} ${NAME}
+	make fclean -C ${LIBFTDIR}
 
 re: fclean all
 
-.PHONY: all clean fclean re		
+.PHONY: all clean fclean re library
