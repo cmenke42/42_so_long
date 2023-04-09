@@ -6,7 +6,7 @@
 #    By: cmenke <cmenke@student.42wolfsburg.de>     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/08 21:07:24 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/08 23:23:21 by cmenke           ###   ########.fr        #
+#    Updated: 2023/04/09 12:16:39 by cmenke           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ library:
 	make -C ${LIBFTDIR}
 
 ${NAME}: ${OBJS}
-	${CC} ${CFLAGS} ${INCLUDE} ${OBJS} -o ${NAME}
+	${CC} ${CFLAGS} ${OBJS} ${INCLUDE} -o ${NAME}
 
 
 ${OBJS}: ${HEADER}

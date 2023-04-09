@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
+/*   By: cmenke <cmenke@student.42wolfsburg.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/22 15:43:58 by cmenke            #+#    #+#             */
-/*   Updated: 2022/12/30 12:49:02 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/09 11:53:11 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 //adds new node at the end of chain.
 //changes the next pointer from the current last one to the addres of new node.
 //checks fo an empty list (NULL).
-void	ft_lstadd_back(t_list **lst, t_list *new)
+void	ft_lstadd_back(t_list **lst, t_list *new_node)
 {
 	if (*lst == NULL)
-		*lst = new;
+		*lst = new_node;
 	else
-		ft_lstlast(*lst)->next = new;
+		ft_lstlast(*lst)->next = new_node;
 }

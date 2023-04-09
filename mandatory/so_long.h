@@ -6,15 +6,18 @@
 /*   By: cmenke <cmenke@student.42wolfsburg.de>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/08 21:04:27 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/09 13:18:51 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SO_LONG_H
 #define SO_LONG_H
 
-#include <stdlib.h>
-#include <stdio.h>
+#include "../libft/libft.h"
+#include <stdbool.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 typedef struct s_lst
 {
@@ -22,6 +25,20 @@ typedef struct s_lst
 	int				col;
 	struct s_lst	*next;
 }				t_lst;
+
+typedef struct s_vars
+{
+	char	*error_text;
+	int		exit_code;
+	char	**map;
+	char	**map_cpy;
+	int		player_pos[2];
+	int		amt_p;
+	int		amt_e;
+	int		amt_c;
+	int		amt_p_e_c;
+	int		taken_c;
+}				t_vars;
 
 //lst_functions
 t_lst	*ft_new_node(int row, int col);
