@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cmenke <cmenke@student.42wolfsburg.de>     +#+  +:+       +#+         #
+#    By: user <user@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/08 21:07:24 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/09 12:16:39 by cmenke           ###   ########.fr        #
+#    Updated: 2023/04/12 18:33:47 by user             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ all: library ${NAME}
 library:
 	make -C ${LIBFTDIR}
 
-${NAME}: ${OBJS}
+${NAME}: ${OBJS} ${LIBFTDIR}/${LIBFT}
 	${CC} ${CFLAGS} ${OBJS} ${INCLUDE} -o ${NAME}
 
 
