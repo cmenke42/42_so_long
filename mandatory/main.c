@@ -6,7 +6,7 @@
 /*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/13 20:28:57 by user             ###   ########.fr       */
+/*   Updated: 2023/04/13 20:57:29 by user             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,16 +44,22 @@ bool	ft_check_map_name(char *map_name, t_vars *vars)
 	return (ft_error("Wrong map Name", 1));
 }
 
-void	ft_free_map(t_vars *vars)
+void	ft_free_map(t_vars *vars, int map)
 {
 	int	i;
 
 	i = 0;
-	if (vars->map)
+	if (map == 0 && vars->map)
 	{
 		while (vars->map[i])
 			free(vars->map[i++]);
 		free(vars->map);
+	}
+	else if (map == 1 && vars->map_cpy)
+	{
+		while (vars->map_cpy[i])
+			free(vars->map_cpy[i++]);
+		free(vars->map_cpy);
 	}
 }
 
@@ -166,6 +172,39 @@ bool	ft_check_map_chars(t_vars *vars)
 	return (true);
 }
 
+bool	ft_copy_map(t_vars *vars)
+{
+	int		i;
+	
+	vars->map_cpy = (char **)malloc((vars->height + 1) * sizeof(char *));
+	if (!vars->map_cpy)
+		return (ft_error("Malloc error", 1));
+	i = 0;
+	while (vars->map[i])
+	{
+		vars->map_cpy[i] = ft_strdup(vars->map[i]);
+		if (!vars->map_cpy[i])
+		{
+			ft_free_map(vars, 1);
+			return (ft_error("Malloc error", 1));
+		}
+		i++;
+	}
+	vars->map_cpy[i] = NULL;
+	return (true);
+}
+
+bool	ft_find_valid_path(t_vars *vars)
+{
+	if (ft_copy_map(vars) == false)
+		return (false);
+	// int i = 0;
+	// while (vars->map_cpy[i])
+	// 	ft_printf("%s", vars->map_cpy[i++]);
+	ft_free_map(vars, 1);
+	return (true);
+}
+
 bool	ft_check_map(char *map_name, t_vars *vars)
 {
 	if (ft_check_map_name(map_name, vars) == false)
@@ -173,6 +212,8 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 	if (ft_read_map(map_name, vars) == false)
 		return (false);
 	if (ft_check_map_chars(vars) == false)
+		return (false);
+	if (ft_find_valid_path(vars) == false)
 		return (false);
 	return (true);
 }
@@ -192,7 +233,7 @@ int	main(int argc, char **argv)
 	ft_bzero(vars, sizeof(t_vars));
 	if (ft_check_map(argv[1], vars) == false)
 		exit_code = 1;
-	ft_free_map(vars);
+	ft_free_map(vars, 0);
 	free (vars);
 	return (exit_code);
 }
