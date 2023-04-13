@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmenke <cmenke@student.42wolfsburg.de>     +#+  +:+       +#+        */
+/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/09 13:18:51 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/13 14:50:57 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ typedef struct s_vars
 	char	*error_text;
 	int		exit_code;
 	char	**map;
+	int		height;
+	int		width;
 	char	**map_cpy;
 	int		player_pos[2];
 	int		amt_p;

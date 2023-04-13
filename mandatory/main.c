@@ -3,26 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/12 19:27:53 by user             ###   ########.fr       */
+/*   Updated: 2023/04/13 16:31:28 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-void	ft_error_exit(char	*error_text, int exit_code)
+bool	ft_error_exit(char	*error_text, int exit_code)
 {
 	if (exit_code != 0)
 	{
 		ft_printf("Error\n");
 		ft_printf("%s\n", error_text);
-		exit(exit_code);
+		return (false);
+		// exit(exit_code);
 	}
 	else
 	{
-		exit(exit_code);
+		// exit(exit_code);
+		return (true);
 	}
 }
 
@@ -41,17 +43,66 @@ bool	ft_check_map_name(char *map_name, t_vars *vars)
 	return (false);
 }
 
+void	ft_free_map(t_vars *vars)
+{
+	int	i;
+
+	i = 0;
+	if (vars->map)
+	{
+		while (vars->map[i])
+			free(vars->map[i++]);
+		free(vars->map);
+	}
+}
+
+bool	ft_add_line(char *line_read, t_vars *vars)
+{
+	char	**map_new;
+	int		i;
+
+	vars->height++;
+	if (vars->height == 1)
+		vars->width = ft_strlen(line_read) - 1;
+	map_new = (char **)malloc((vars->height + 1) * sizeof(char *));
+	if (!map_new)
+	{
+		ft_free_map(vars);
+		return (ft_error_exit("Malloc error", 1));
+	}
+	i = -1;
+	while (++i < vars->height - 1)
+		map_new[i] = vars->map[i];
+	map_new[i++] = line_read;
+	map_new[i] = NULL;
+	if (vars->map)
+		free(vars->map);
+	vars->map = map_new;
+	return (true);
+}
+
 bool ft_read_map(char *map_name, t_vars *vars)
 {
-	int fd;
-
+	int		fd;
+	bool	result;
+	char	*line_read;
+	
 	fd = open(map_name, O_RDONLY);
-	if (fd > -1)
+	if (fd <= -1)
+		return (ft_error_exit("Error opening the file", 1));
+	line_read = get_next_line(fd);
+	while (line_read)
 	{
-		
+		if (ft_add_line(line_read, vars) == false)
+			break;
+		line_read = get_next_line(fd);
 	}
-	vars->error_text = "Error while reading the map";
-	vars->exit_code = 1;
+	while (line_read)
+	{
+		free(line_read);
+		line_read = get_next_line(fd);
+	}
+	close(fd);
 	return (false);
 }
 
@@ -61,8 +112,8 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 		return (false);
 	if (ft_read_map(map_name, vars) == false)
 		return (false);
+	return (true);
 }
-
 
 int	main(int argc, char **argv)
 {
@@ -74,7 +125,9 @@ int	main(int argc, char **argv)
 	ft_bzero(vars, sizeof(t_vars));
 	if (argc != 2)
 		ft_error_exit("Wrong input file", 1);
-		
+	if (ft_check_map(argv[1], vars) == false)
+		ft_error_exit(vars->error_text, vars->exit_code);
+	free (vars);
 }
 
 // bool ft_check_path()

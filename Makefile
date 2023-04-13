@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: user <user@student.42.fr>                  +#+  +:+       +#+         #
+#    By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/08 21:07:24 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/12 18:33:47 by user             ###   ########.fr        #
+#    Updated: 2023/04/13 15:36:43 by cmenke           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,8 @@ LIBFTDIR := libft
 
 LIBFT := libft.a
 
-INCLUDE := -l:${LIBFT} -L${LIBFTDIR}
+# INCLUDE := -L${LIBFTDIR} -l:${LIBFT}
+INCLUDE := ${LIBFTDIR}/${LIBFT}
 
 # CFLAGS := -Wall -Werror -Wextra
 
