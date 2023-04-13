@@ -6,7 +6,7 @@
 /*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/13 19:28:23 by user             ###   ########.fr       */
+/*   Updated: 2023/04/13 21:06:22 by user             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ typedef struct s_vars
 	int		height;
 	int		width;
 	char	**map_cpy;
-	int		player_pos[2];
+	int		player_pos_row;
+	int		player_pos_col;
 	int		amt_p;
 	int		amt_e;
 	int		amt_c;

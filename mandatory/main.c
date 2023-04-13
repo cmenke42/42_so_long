@@ -6,7 +6,7 @@
 /*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/13 20:57:29 by user             ###   ########.fr       */
+/*   Updated: 2023/04/13 21:52:46 by user             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ bool ft_read_map(char *map_name, t_vars *vars)
 	return (true);
 }
 
-bool	ft_valid_char(char c, t_vars *vars)
+bool	ft_valid_char(char c, t_vars *vars, int row, int col)
 {
 	if (c == '0' || c == '1')
 		return (true);
@@ -125,6 +125,8 @@ bool	ft_valid_char(char c, t_vars *vars)
 	}
 	else if (c == 'P')
 	{
+		vars->player_pos_row = row;
+		vars->player_pos_col= col;
 		vars->amt_p++;
 		if (vars->amt_p != 1)
 			return (ft_error("Too many of P", 1));
@@ -148,7 +150,7 @@ bool	ft_check_map_lines(t_vars *vars, int i, int j)
 				if (vars->map[i][j] != '1')
 					return (ft_error("Not surrounded by '1'", 1));
 			}
-			else if (ft_valid_char(vars->map[i][j], vars) == false)
+			else if (ft_valid_char(vars->map[i][j], vars, i, j) == false)
 				return (false);
 			j++;
 		}
@@ -168,7 +170,7 @@ bool	ft_check_map_chars(t_vars *vars)
 	if (ft_check_map_lines(vars, 0, 0) == false)
 		return (false);
 	if (vars->amt_e != 1 || vars->amt_p != 1 || vars->amt_c < 1)
-		return (ft_error("Wrong ammount of collectables", 1));
+		return (ft_error("Wrong ammount of E P or C", 1));
 	return (true);
 }
 
@@ -194,10 +196,84 @@ bool	ft_copy_map(t_vars *vars)
 	return (true);
 }
 
-bool	ft_find_valid_path(t_vars *vars)
+bool	ft_check_field(char c, t_vars *vars)
+{
+	if (c == '0')
+		return (true);
+	else if (c == '1')
+		return (false);
+	else if (c == 'C' || c == 'E' || c == 'P')
+		vars->amt_p_e_c++;
+	else
+		return (false);
+	return (true);
+}
+
+bool	ft_do_direction(t_vars *vars, t_lst **pos_stk, int row, int col)
+{
+	t_lst *temp;
+	
+	if (ft_check_field(vars->map_cpy[row][col], vars))
+	{
+		vars->map_cpy[row][col] = '1';
+		temp = ft_new_node(row, col);
+		if (!temp)
+		{
+			ft_clear_lst(pos_stk);
+			return (ft_error("Malloc error", 1));
+		}
+		ft_node_add_back(pos_stk, temp);
+	}
+	return (true);
+}
+
+bool	ft_check_dir(t_vars *vars, int row, int col, t_lst **pos_stk)
+{
+	if (!(row < 0 || row >= vars->height || col < 0 || col >= vars->width))
+	{
+		if (ft_do_direction(vars, pos_stk, row + 1, col) == false)
+			return (false);
+		if (ft_do_direction(vars, pos_stk, row - 1, col) == false)
+			return (false);
+		if (ft_do_direction(vars, pos_stk, row, col + 1) == false)
+			return (false);
+		if (ft_do_direction(vars, pos_stk, row, col - 1) == false)
+			return (false);
+	}
+	return (true);
+}
+
+bool	ft_find_path(t_vars *vars)
+{
+	t_lst	*pos_stk;
+	t_lst	*temp;
+	
+	pos_stk = ft_new_node(vars->player_pos_row, vars->player_pos_col);
+	if (!pos_stk)
+		return (ft_error("Malloc error", 1));
+	while (pos_stk)
+	{
+		if (ft_check_dir(vars, pos_stk->row, pos_stk->col, &pos_stk) == false)
+			return (false);
+		temp = pos_stk;
+		pos_stk = pos_stk->next;
+		free(temp);
+	}
+	ft_clear_lst(&pos_stk);
+	if (vars->amt_p + vars->amt_e + vars->amt_c != vars->amt_p_e_c)
+		return (ft_error("No valid path", 1));
+	return (true);
+}
+
+bool	ft_check_path(t_vars *vars)
 {
 	if (ft_copy_map(vars) == false)
 		return (false);
+	if (ft_find_path(vars) == false)
+	{
+		ft_free_map(vars, 1);
+		return (false);
+	}
 	// int i = 0;
 	// while (vars->map_cpy[i])
 	// 	ft_printf("%s", vars->map_cpy[i++]);
@@ -213,7 +289,7 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 		return (false);
 	if (ft_check_map_chars(vars) == false)
 		return (false);
-	if (ft_find_valid_path(vars) == false)
+	if (ft_check_path(vars) == false)
 		return (false);
 	return (true);
 }
@@ -233,38 +309,9 @@ int	main(int argc, char **argv)
 	ft_bzero(vars, sizeof(t_vars));
 	if (ft_check_map(argv[1], vars) == false)
 		exit_code = 1;
+	if (exit_code == 0)
+		ft_printf("\n\n##all good##\n\n");
 	ft_free_map(vars, 0);
 	free (vars);
 	return (exit_code);
 }
-
-// bool ft_check_path()
-
-
-
-// int	main(void)
-// {
-// 	t_lst *stack;
-// 	t_lst *temp;
-// 	int		i;
-
-// 	i = 0;
-// 	stack = ft_new_node(-1, 0);
-// 	if (!stack)
-// 		return (1);
-// 	while (i < 15)
-// 	{
-// 		ft_node_add_back(&stack, ft_new_node(i, 0));
-// 		i++;
-// 	}
-// 	temp = stack;
-// 	while (temp)
-// 	{
-// 		printf("%d##%d\n", temp->row, temp->col);
-// 		temp = temp->next;
-// 	}
-// 	ft_clear_lst(&stack);
-// 	if (stack)
-// 		printf("error");
-	
-// }
