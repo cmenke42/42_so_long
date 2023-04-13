@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+         #
+#    By: user <user@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/13 09:41:00 by cmenke            #+#    #+#              #
-#    Updated: 2023/03/28 14:26:39 by cmenke           ###   ########.fr        #
+#    Updated: 2023/04/13 18:49:16 by user             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -60,7 +60,7 @@ SRC = ft_isalpha.c \
 	ft_lstiter.c \
 	ft_lstmap.c \
 	ft_printf.c \
-	get_next_line_bonus.c
+	get_next_line.c
 
 OBJS = ${SRC:.c=.o}
 

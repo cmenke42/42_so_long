@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
+/*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/15 11:52:31 by cmenke            #+#    #+#             */
-/*   Updated: 2023/03/02 15:08:15 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/13 18:51:54 by user             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,26 +83,30 @@ static char	*ft_check_remainder(char **remainder, int fd, int *inf)
 
 //checks if the remainder is empty and if so it will read a line.
 //then calls check remainder and frees remainder in case of error.
-//create a multidimensional array for the different fd_remainders
-//remainder array of size [1024]
+//frees the remainder if it exists when fd is invalid
 char	*get_next_line(int fd)
 {
-	static char	*remainder[1024];
+	static char	*remainder;
 	char		*line;
 	int			inf;
 
 	inf = 1;
 	line = NULL;
-	if (fd == -1 || fd > 1024)
+	if (fd <= -1)
+	{
+		if (remainder)
+			free(remainder);
+		remainder = NULL;
 		return (NULL);
-	if (!remainder[fd])
-		remainder[fd] = ft_read_line(fd, &inf);
-	if (remainder[fd])
-		line = ft_check_remainder(&remainder[fd], fd, &inf);
+	}
+	if (!remainder)
+		remainder = ft_read_line(fd, &inf);
+	if (remainder)
+		line = ft_check_remainder(&remainder, fd, &inf);
 	if (!line)
 	{
-		free(remainder[fd]);
-		remainder[fd] = NULL;
+		free(remainder);
+		remainder = NULL;
 	}
 	return (line);
 }

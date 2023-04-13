@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
+/*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/13 16:50:36 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/13 19:20:05 by user             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,15 @@ bool	ft_error_exit(char	*error_text, int exit_code)
 	{
 		ft_printf("Error\n");
 		ft_printf("%s\n", error_text);
-		return (false);
+		return (exit_code);
 		// exit(exit_code);
 	}
+	else if (exit_code == 2)
+		return (exit_code);
 	else
 	{
 		// exit(exit_code);
-		return (true);
+		return (0);
 	}
 }
 
@@ -64,13 +66,9 @@ bool	ft_add_line(char *line_read, t_vars *vars)
 	vars->height++;
 	if (vars->height == 1)
 		vars->width = ft_strlen(line_read) - 1;
-	// map_new = (char **)malloc((vars->height + 1) * sizeof(char *));
-	map_new = NULL;
+	map_new = (char **)malloc((vars->height + 1) * sizeof(char *));
 	if (!map_new)
-	{
-		ft_free_map(vars);
 		return (ft_error_exit("Malloc error", 1));
-	}
 	i = -1;
 	while (++i < vars->height - 1)
 		map_new[i] = vars->map[i];
@@ -94,24 +92,16 @@ bool ft_read_map(char *map_name, t_vars *vars)
 	line_read = get_next_line(fd);
 	while (line_read)
 	{
-		if (ft_add_line(line_read, vars) == false)
-			break;
-		line_read = get_next_line(fd);
+		if (ft_add_line(line_read, vars) == true)
+			line_read = get_next_line(fd);
+		else
+		{
+			if (line_read)
+				free(line_read);
+			line_read = get_next_line(-1);
+			return (false);
+		}
 	}
-	if (line_read)
-	{
-		free(line_read);
-		return (false);
-	}
-	// if (line_read)
-	// {
-	// 	while (line_read)
-	// 	{
-	// 		free(line_read);
-	// 		line_read = get_next_line(fd);
-	// 	}
-	// 	return (false);
-	// }
 	close(fd);
 	return (true);
 }
@@ -130,25 +120,22 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 
 int	main(int argc, char **argv)
 {
-	// t_vars *vars;
+	t_vars *vars;
+	int		exit_code;
 	
 
-	// vars = malloc(sizeof(t_vars));
-	// if (!vars)
-	// 	ft_error_exit("Malloc error", 1);
-	// ft_bzero(vars, sizeof(t_vars));
-	// if (argc != 2)
-	// 	ft_error_exit("Wrong input file", 1);
-	// if (ft_check_map(argv[1], vars) == false)
-	// 	ft_error_exit(vars->error_text, vars->exit_code);
-	// free (vars);
-	char *line_read;
-	int	fd;
-	
-	fd = open(argv[1], O_RDONLY);
-	line_read = get_next_line(fd);
-	free(line_read);
-	close (fd);
+	exit_code = 0;
+	if (argc != 2)
+		return (ft_error_exit("Wrong input file", 1));
+	vars = malloc(sizeof(t_vars));
+	if (!vars)
+		return (ft_error_exit("Malloc error", 1));
+	ft_bzero(vars, sizeof(t_vars));
+	if (ft_check_map(argv[1], vars) == false)
+		exit_code = 1;
+	ft_free_map(vars);
+	free (vars);
+	return (exit_code);
 }
 
 // bool ft_check_path()
