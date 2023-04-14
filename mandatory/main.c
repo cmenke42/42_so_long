@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/13 21:52:46 by user             ###   ########.fr       */
+/*   Updated: 2023/04/14 11:50:37 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,7 +208,6 @@ bool	ft_check_field(char c, t_vars *vars)
 		return (false);
 	return (true);
 }
-
 bool	ft_do_direction(t_vars *vars, t_lst **pos_stk, int row, int col)
 {
 	t_lst *temp;
@@ -280,7 +279,6 @@ bool	ft_check_path(t_vars *vars)
 	ft_free_map(vars, 1);
 	return (true);
 }
-
 bool	ft_check_map(char *map_name, t_vars *vars)
 {
 	if (ft_check_map_name(map_name, vars) == false)
@@ -293,6 +291,15 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 		return (false);
 	return (true);
 }
+
+/////
+//above all for error and map checking
+////
+
+///
+//mlx things
+///
+
 
 int	main(int argc, char **argv)
 {
