@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/14 11:50:37 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/15 20:15:26 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,14 +68,14 @@ bool	ft_add_line(char *line_read, t_vars *vars)
 	char	**map_new;
 	int		i;
 
-	vars->height++;
-	if (vars->height == 1)
-		vars->width = ft_strlen(line_read) - 1;
-	map_new = (char **)malloc((vars->height + 1) * sizeof(char *));
+	vars->map_hgt++;
+	if (vars->map_hgt == 1)
+		vars->map_wth = ft_strlen(line_read) - 1;
+	map_new = (char **)malloc((vars->map_hgt + 1) * sizeof(char *));
 	if (!map_new)
 		return (ft_error("Malloc error", 1));
 	i = -1;
-	while (++i < vars->height - 1)
+	while (++i < vars->map_hgt - 1)
 		map_new[i] = vars->map[i];
 	map_new[i++] = line_read;
 	map_new[i] = NULL;
@@ -145,7 +145,7 @@ bool	ft_check_map_lines(t_vars *vars, int i, int j)
 				return (ft_error("Not surrounded by '1'", 1));
 		while (vars->map[i][j] && vars->map[i][j] != '\n')
 		{
-			if (i == 0 || i + 1 == vars->height)
+			if (i == 0 || i + 1 == vars->map_hgt)
 			{
 				if (vars->map[i][j] != '1')
 					return (ft_error("Not surrounded by '1'", 1));
@@ -154,7 +154,7 @@ bool	ft_check_map_lines(t_vars *vars, int i, int j)
 				return (false);
 			j++;
 		}
-		if (j != vars->width)
+		if (j != vars->map_wth)
 			return (ft_error("Not a rectangle", 1));
 		if (vars->map[i][j - 1] != '1')
 			return (ft_error("Not surrounded by '1'", 1));
@@ -165,7 +165,7 @@ bool	ft_check_map_lines(t_vars *vars, int i, int j)
 
 bool	ft_check_map_chars(t_vars *vars)
 {
-	if (vars->width < 3 || vars->height < 3)
+	if (vars->map_wth < 3 || vars->map_hgt < 3)
 		return (ft_error("Map too small", 1));
 	if (ft_check_map_lines(vars, 0, 0) == false)
 		return (false);
@@ -178,7 +178,7 @@ bool	ft_copy_map(t_vars *vars)
 {
 	int		i;
 	
-	vars->map_cpy = (char **)malloc((vars->height + 1) * sizeof(char *));
+	vars->map_cpy = (char **)malloc((vars->map_hgt + 1) * sizeof(char *));
 	if (!vars->map_cpy)
 		return (ft_error("Malloc error", 1));
 	i = 0;
@@ -228,7 +228,7 @@ bool	ft_do_direction(t_vars *vars, t_lst **pos_stk, int row, int col)
 
 bool	ft_check_dir(t_vars *vars, int row, int col, t_lst **pos_stk)
 {
-	if (!(row < 0 || row >= vars->height || col < 0 || col >= vars->width))
+	if (!(row < 0 || row >= vars->map_hgt || col < 0 || col >= vars->map_wth))
 	{
 		if (ft_do_direction(vars, pos_stk, row + 1, col) == false)
 			return (false);
@@ -300,6 +300,23 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 //mlx things
 ///
 
+bool	ft_game(t_vars *vars)
+{	
+	vars->mlx_ptr = mlx_init();
+	if (!vars->mlx_ptr)
+		return (ft_error("MLX init failed", 1));
+	vars->win_ptr = mlx_new_window(vars->mlx_ptr, 1920, 1080, "so_long");
+	if (!vars->mlx_ptr)
+	{
+		free(vars->mlx_ptr);
+		return (ft_error("MLX init failed", 1));
+	}
+	mlx_loop(vars->mlx_ptr);
+	mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+	free(vars->mlx_ptr);
+	return (true);
+}
+
 
 int	main(int argc, char **argv)
 {
@@ -316,8 +333,11 @@ int	main(int argc, char **argv)
 	ft_bzero(vars, sizeof(t_vars));
 	if (ft_check_map(argv[1], vars) == false)
 		exit_code = 1;
+	if (ft_game(vars) == false)
+		exit_code = 1;
 	if (exit_code == 0)
 		ft_printf("\n\n##all good##\n\n");
+	//close game???
 	ft_free_map(vars, 0);
 	free (vars);
 	return (exit_code);

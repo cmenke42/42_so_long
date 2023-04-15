@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   so_long.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/13 21:06:22 by user             ###   ########.fr       */
+/*   Updated: 2023/04/15 20:14:02 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "../mlx/mlx.h"
 
 typedef struct s_lst
 {
@@ -26,15 +27,16 @@ typedef struct s_lst
 	struct s_lst	*next;
 }				t_lst;
 
+//mlx_ptr is a big struct from mlx
 typedef struct s_vars
 {
 	char	*error_text;
 	int		exit_code;
 	char	**map;
-	//height and width are exact
-	int		height;
-	int		width;
 	char	**map_cpy;
+	//height and width are exact
+	int		map_hgt;
+	int		map_wth;
 	int		player_pos_row;
 	int		player_pos_col;
 	int		amt_p;
@@ -42,6 +44,8 @@ typedef struct s_vars
 	int		amt_c;
 	int		amt_p_e_c;
 	int		taken_c;
+	void	*mlx_ptr;
+	void	*win_ptr;
 }				t_vars;
 
 //lst_functions

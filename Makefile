@@ -6,9 +6,11 @@
 #    By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/08 21:07:24 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/13 15:36:43 by cmenke           ###   ########.fr        #
+#    Updated: 2023/04/15 19:20:28 by cmenke           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+# := sets the value only once
 
 NAME := so_long
 
@@ -26,8 +28,12 @@ LIBFTDIR := libft
 
 LIBFT := libft.a
 
+MLXDIR := mlx
+
+MLXLIB := libmlx.a
+
 # INCLUDE := -L${LIBFTDIR} -l:${LIBFT}
-INCLUDE := ${LIBFTDIR}/${LIBFT}
+INCLUDE := ${LIBFTDIR}/${LIBFT} ${MLXDIR}/${MLXLIB} -framework OpenGL -framework AppKit
 
 # CFLAGS := -Wall -Werror -Wextra
 
@@ -39,8 +45,9 @@ all: library ${NAME}
 
 library:
 	make -C ${LIBFTDIR}
+	make -C ${MLXDIR}
 
-${NAME}: ${OBJS} ${LIBFTDIR}/${LIBFT}
+${NAME}: ${OBJS} ${LIBFTDIR}/${LIBFT} ${MLXDIR}/${MLXLIB}
 	${CC} ${CFLAGS} ${OBJS} ${INCLUDE} -o ${NAME}
 
 
@@ -49,10 +56,12 @@ ${OBJS}: ${HEADER}
 clean:
 	${RM} ${OBJS}
 	make clean -C ${LIBFTDIR}
+	make clean -C ${MLXDIR}
 
 fclean: clean
 	${RM} ${NAME}
 	make fclean -C ${LIBFTDIR}
+	make clean -C ${MLXDIR}
 
 re: fclean all
 
