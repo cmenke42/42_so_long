@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/15 21:18:34 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 01:05:20 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "../mlx/mlx.h"
+
+#define WALL_IMG "../textures/wall.xpm"
+#define	IMG_WTH 30
+#define	IMG_HGT 30
 
 typedef struct s_lst
 {
@@ -38,6 +42,15 @@ enum	e_keys
 	key_esc = 53
 };
 
+//variables for each texture | mlx_img
+typedef struct s_img
+{
+	void	*img_ptr;
+	char	*address;
+	int		bits_per_pixel;
+	int		size_line;
+	int		endian;
+}				t_img;
 //mlx_ptr is a big struct from mlx
 typedef struct s_vars
 {
@@ -57,12 +70,14 @@ typedef struct s_vars
 	int		taken_c;
 	void	*mlx_ptr;
 	void	*win_ptr;
+	t_img	path_img;
+	t_img	wall_img;
+	t_img	player_img;
+	t_img	collect_img;
+	t_img	exit_img;
+
 }				t_vars;
-typedef struct s_mlx
-{
-	void	*mlx_ptr;
-	void	*win_ptr;
-}				t_mlx;
+
 
 
 //lst_functions

@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/15 23:30:02 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 01:05:52 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,6 +307,7 @@ void	ft_close_game(t_vars *vars)
 
 	exit_code = vars->exit_code;
 	mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+	vars->win_ptr = NULL;
 	ft_free_map(vars, 0);
 	free(vars);
 	exit(exit_code);
@@ -341,17 +342,57 @@ int	ft_create_color(int t, int r, int g, int b)
 	return(t << 24 | r << 16 | g << 8 | b);
 }
 
+// int	ft_render(t_vars *vars)
+// {
+// 	int	color;
+// 	int i;
+// 	int j;
+
+// 	color = ft_create_color(0,255,0,0);
+// 	if (!vars->win_ptr)
+// 		return (1);
+// 	i = 0;
+// 	while (i < 1920)
+// 	{
+// 		j = 0;
+// 		while (j < 1080)
+// 		{
+// 			mlx_pixel_put(vars->mlx_ptr, vars->win_ptr, i, j, color);
+// 			j += 20;
+// 		}
+// 		i += 30;
+// 	}
+// 	return (0);
+// }
 int	ft_render(t_vars *vars)
 {
-	int	color;
-
-	color = ft_create_color(0,255,0,0);
-	if (vars->win_ptr)
-	{
-		mlx_pixel_put(vars->mlx_ptr, vars->win_ptr, 500, 500, color);
-	}
+	if (!vars->win_ptr)
+		return (1);
+	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, 30, 30);
 	return (0);
 }
+
+bool	ft_create_mlx_images(t_vars *vars)
+{
+	int	wth;
+	int	hgt;
+
+	wth = IMG_WTH;
+	hgt = IMG_HGT;
+	
+	//path
+	vars->path_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, WALL_IMG, &wth, &hgt);
+	if (!vars->path_img.img_ptr)
+		ft_printf("NO\n");
+	vars->path_img.address = mlx_get_data_addr(vars->path_img.img_ptr, &(vars->path_img.bits_per_pixel),
+		&(vars->path_img.size_line), &(vars->path_img.endian));
+	//wall
+	//player
+	//collectable
+	//exit
+	return (0);
+}
+
 
 bool	ft_game(t_vars *vars)
 {	
