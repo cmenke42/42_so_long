@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/15 20:15:26 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/15 23:30:02 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 bool	ft_error_exit(char	*error_text, int exit_code)
 {
-		ft_printf("Error\n");
-		ft_printf("%s\n", error_text);
+		write(2, "Error\n", 6);
+		ft_putendl_fd(error_text, 2);
+		ft_putendl_fd("\n", 2);
 		return (exit_code);
 }
 
@@ -23,15 +24,16 @@ bool	ft_error(char	*error_text, int exit_code)
 {
 	if (exit_code != 0)
 	{
-		ft_printf("Error\n");
-		ft_printf("%s\n", error_text);
+		write(2, "Error\n", 6);
+		ft_putendl_fd(error_text, 2);
+		ft_putendl_fd("\n", 2);
 		return (false);
 		// exit(exit_code);
 	}
 	return (true);
 }
 
-bool	ft_check_map_name(char *map_name, t_vars *vars)
+bool	ft_check_map_name(char *map_name)
 {
 	int	name_len;
 
@@ -88,7 +90,6 @@ bool	ft_add_line(char *line_read, t_vars *vars)
 bool ft_read_map(char *map_name, t_vars *vars)
 {
 	int		fd;
-	bool	result;
 	char	*line_read;
 	
 	fd = open(map_name, O_RDONLY);
@@ -281,7 +282,7 @@ bool	ft_check_path(t_vars *vars)
 }
 bool	ft_check_map(char *map_name, t_vars *vars)
 {
-	if (ft_check_map_name(map_name, vars) == false)
+	if (ft_check_map_name(map_name) == false)
 		return (false);
 	if (ft_read_map(map_name, vars) == false)
 		return (false);
@@ -300,6 +301,58 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 //mlx things
 ///
 
+void	ft_close_game(t_vars *vars)
+{
+	int	exit_code;
+
+	exit_code = vars->exit_code;
+	mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+	ft_free_map(vars, 0);
+	free(vars);
+	exit(exit_code);
+}
+
+int	ft_close_window_esc(int keycode, t_vars *vars)
+{
+	if (keycode == key_esc)
+	{
+		ft_close_game(vars);
+		// mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+		return (0);
+	}
+	return (1);
+}
+
+int	ft_close_window_x(t_vars *vars)
+{
+	// mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
+	ft_close_game(vars);
+	return (0);
+}
+
+/// @brief -> creates an TRGB int value, each value goes from  0 to 255.
+// 				each parameter is one byte (8 bits) big
+/// @param t transparency 
+/// @param r red 
+/// @param g green
+/// @param b blue
+int	ft_create_color(int t, int r, int g, int b)
+{
+	return(t << 24 | r << 16 | g << 8 | b);
+}
+
+int	ft_render(t_vars *vars)
+{
+	int	color;
+
+	color = ft_create_color(0,255,0,0);
+	if (vars->win_ptr)
+	{
+		mlx_pixel_put(vars->mlx_ptr, vars->win_ptr, 500, 500, color);
+	}
+	return (0);
+}
+
 bool	ft_game(t_vars *vars)
 {	
 	vars->mlx_ptr = mlx_init();
@@ -311,8 +364,11 @@ bool	ft_game(t_vars *vars)
 		free(vars->mlx_ptr);
 		return (ft_error("MLX init failed", 1));
 	}
+	mlx_hook(vars->win_ptr, win_closed, 0L, ft_close_window_x, vars);
+	mlx_hook(vars->win_ptr, 7, 0L, ft_close_window_x, vars);
+	mlx_hook(vars->win_ptr, on_keydown, 1L<<0, ft_close_window_esc, vars);
+	mlx_loop_hook(vars->mlx_ptr, ft_render, vars);
 	mlx_loop(vars->mlx_ptr);
-	mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
 	free(vars->mlx_ptr);
 	return (true);
 }
@@ -333,7 +389,7 @@ int	main(int argc, char **argv)
 	ft_bzero(vars, sizeof(t_vars));
 	if (ft_check_map(argv[1], vars) == false)
 		exit_code = 1;
-	if (ft_game(vars) == false)
+	if (exit_code == 0 && ft_game(vars) == false)
 		exit_code = 1;
 	if (exit_code == 0)
 		ft_printf("\n\n##all good##\n\n");

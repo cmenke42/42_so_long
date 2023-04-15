@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/15 20:14:02 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/15 21:18:34 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,17 @@ typedef struct s_lst
 	int				col;
 	struct s_lst	*next;
 }				t_lst;
+
+enum	e_events
+{
+	on_keydown = 2,
+	win_closed = 17
+};
+
+enum	e_keys
+{
+	key_esc = 53
+};
 
 //mlx_ptr is a big struct from mlx
 typedef struct s_vars
@@ -47,6 +58,12 @@ typedef struct s_vars
 	void	*mlx_ptr;
 	void	*win_ptr;
 }				t_vars;
+typedef struct s_mlx
+{
+	void	*mlx_ptr;
+	void	*win_ptr;
+}				t_mlx;
+
 
 //lst_functions
 t_lst	*ft_new_node(int row, int col);
