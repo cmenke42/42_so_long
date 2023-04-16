@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 01:05:52 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 16:16:44 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -368,7 +368,7 @@ int	ft_render(t_vars *vars)
 {
 	if (!vars->win_ptr)
 		return (1);
-	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, 30, 30);
+	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, 0, 0);
 	return (0);
 }
 
@@ -376,6 +376,7 @@ bool	ft_create_mlx_images(t_vars *vars)
 {
 	int	wth;
 	int	hgt;
+	void *image;
 
 	wth = IMG_WTH;
 	hgt = IMG_HGT;
@@ -383,7 +384,7 @@ bool	ft_create_mlx_images(t_vars *vars)
 	//path
 	vars->path_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, WALL_IMG, &wth, &hgt);
 	if (!vars->path_img.img_ptr)
-		ft_printf("NO\n");
+		return (false);
 	vars->path_img.address = mlx_get_data_addr(vars->path_img.img_ptr, &(vars->path_img.bits_per_pixel),
 		&(vars->path_img.size_line), &(vars->path_img.endian));
 	//wall
@@ -405,8 +406,8 @@ bool	ft_game(t_vars *vars)
 		free(vars->mlx_ptr);
 		return (ft_error("MLX init failed", 1));
 	}
+	ft_create_mlx_images(vars);
 	mlx_hook(vars->win_ptr, win_closed, 0L, ft_close_window_x, vars);
-	mlx_hook(vars->win_ptr, 7, 0L, ft_close_window_x, vars);
 	mlx_hook(vars->win_ptr, on_keydown, 1L<<0, ft_close_window_esc, vars);
 	mlx_loop_hook(vars->mlx_ptr, ft_render, vars);
 	mlx_loop(vars->mlx_ptr);

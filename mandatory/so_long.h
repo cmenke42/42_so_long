@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 01:05:20 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 16:06:16 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <fcntl.h>
 #include "../mlx/mlx.h"
 
-#define WALL_IMG "../textures/wall.xpm"
+#define WALL_IMG "textures/wall.xpm"
 #define	IMG_WTH 30
 #define	IMG_HGT 30
 
