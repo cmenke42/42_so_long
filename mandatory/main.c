@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 16:16:44 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 17:21:26 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,9 +366,26 @@ int	ft_create_color(int t, int r, int g, int b)
 // }
 int	ft_render(t_vars *vars)
 {
+	int	i;
+	int	j;
+
 	if (!vars->win_ptr)
 		return (1);
-	mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, 0, 0);
+	i = 0;
+	while(i < vars->map_hgt)
+	{
+		j = 0;
+		while (j < vars->map_wth)
+		{
+			if (vars->map[i][j] == '0')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, j * 30, i * 30);
+			else if (vars->map[i][j] == '1')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, j * 30, i * 30);
+			j++;
+		}
+		i++;
+	}
+	// mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, vars->player_pos_col * 30, vars->player_pos_row * 30);
 	return (0);
 }
 
@@ -381,19 +398,55 @@ bool	ft_create_mlx_images(t_vars *vars)
 	wth = IMG_WTH;
 	hgt = IMG_HGT;
 	
+	//free the rest if one lower gets failed
 	//path
-	vars->path_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, WALL_IMG, &wth, &hgt);
+	vars->path_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, PATH_IMG, &wth, &hgt);
 	if (!vars->path_img.img_ptr)
 		return (false);
-	vars->path_img.address = mlx_get_data_addr(vars->path_img.img_ptr, &(vars->path_img.bits_per_pixel),
-		&(vars->path_img.size_line), &(vars->path_img.endian));
+	// vars->path_img.address = mlx_get_data_addr(vars->path_img.img_ptr, &(vars->path_img.bits_per_pixel),
+	// 	&(vars->path_img.size_line), &(vars->path_img.endian));
 	//wall
+	vars->wall_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, WALL_IMG, &wth, &hgt);
+	if (!vars->wall_img.img_ptr)
+		return (false);
 	//player
 	//collectable
 	//exit
 	return (0);
 }
 
+void	ft_swap(char *a, char *b)
+{
+	char	temp;
+
+	temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+void	ft_change_player_pos(t_vars *vars, int row, int col)
+{
+	ft_swap(&vars->map[vars->player_pos_row][vars->player_pos_col], &vars->map[row][col]);
+	vars->player_pos_row = row;
+	vars->player_pos_col = col;
+}
+
+int	ft_key_press(int keycode, t_vars *vars)
+{
+	if (keycode == arrow_left)
+		ft_change_player_pos(vars, vars->player_pos_row, vars->player_pos_col - 1);
+	else if (keycode == arrow_right)
+		ft_change_player_pos(vars, vars->player_pos_row, vars->player_pos_col + 1);
+	else if (keycode == arrow_up)
+		ft_change_player_pos(vars, vars->player_pos_row - 1, vars->player_pos_col);
+	else if (keycode == arrow_down)
+		ft_change_player_pos(vars, vars->player_pos_row + 1, vars->player_pos_col);
+	else if (keycode == key_esc)
+		ft_close_game(vars);
+	else
+		return (1);
+	return (0);
+}
 
 bool	ft_game(t_vars *vars)
 {	
@@ -408,7 +461,7 @@ bool	ft_game(t_vars *vars)
 	}
 	ft_create_mlx_images(vars);
 	mlx_hook(vars->win_ptr, win_closed, 0L, ft_close_window_x, vars);
-	mlx_hook(vars->win_ptr, on_keydown, 1L<<0, ft_close_window_esc, vars);
+	mlx_hook(vars->win_ptr, on_keydown, 1L<<0, ft_key_press, vars);
 	mlx_loop_hook(vars->mlx_ptr, ft_render, vars);
 	mlx_loop(vars->mlx_ptr);
 	free(vars->mlx_ptr);
