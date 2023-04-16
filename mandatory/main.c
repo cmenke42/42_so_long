@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 17:21:26 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 18:42:11 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -424,8 +424,34 @@ void	ft_swap(char *a, char *b)
 	*b = temp;
 }
 
+//make sure the exit doesnt change position if you nove over it
+bool	ft_check_move(t_vars *vars, int row, int col)
+{
+	char c;
+
+	c = vars->map[row][col] == '0';
+	if(c == '0')
+		return (true);
+	else if(c == 'C')
+	{
+		vars->taken_c++;
+		vars->map[row][col] = '0';
+	}
+	else if (c == 'E')
+	{
+		if (vars->taken_c == vars->amt_c)
+			ft_close_game(vars);
+	}
+	else
+		return (false);
+	return (true);
+}
+
 void	ft_change_player_pos(t_vars *vars, int row, int col)
 {
+
+	if (ft_check_move(vars, row, col) == false)
+		return ;
 	ft_swap(&vars->map[vars->player_pos_row][vars->player_pos_col], &vars->map[row][col]);
 	vars->player_pos_row = row;
 	vars->player_pos_col = col;
