@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 21:49:32 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 22:37:12 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,15 @@ typedef struct s_vars
 	t_img	player_img;
 	t_img	collect_img;
 	t_img	exit_img;
-
+	//pov movement
+	int		pov_top;
+	int		pov_bot;
+	int		pov_left;
+	int		pov_right;
+	int		pov_top_max;
+	int		pov_bot_max;
+	int		pov_left_max;
+	int		pov_right_max;
 }				t_vars;
 
 

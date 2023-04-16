@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 21:58:53 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/17 00:33:50 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -401,31 +401,41 @@ int	ft_create_xor(int t, int r, int g, int b)
 
 //mit offset starten. 1920 / 30 und 1080 / 30 als Sichtfeld.
 //Checken ob außenkante erreicht wurde primär und secundär die sichtfeldgröße als Maße
+//so bewegen dass p_pos_x - offset <= pov_left und right max
 int	ft_render_pov(t_vars *vars)
 {
 	int	y;
 	int	x;
+	int	i;
+	int	j;
 
 	if (!vars->win_ptr)
 		return (1);
+	i = 0;
+	j = 0;
 	y = 0;
 	while(y < vars->map_hgt)
 	{
-		x = 0;
-		while (x < vars->map_wth)
+		x = vars->p_pos_x - vars->pov_left;
+		if (x < 0)
+			x = 0;
+		i = 0;
+		while (x >= 0 && x < vars->map_wth && i < 64)
 		{
 			if (vars->map[y][x] == '0')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, i * IMG_WTH, j * IMG_HGT);
 			else if (vars->map[y][x] == '1')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, i * IMG_WTH, j * IMG_HGT);
 			else if (vars->map[y][x] == 'C')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->collect_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->collect_img.img_ptr, i * IMG_WTH, j * IMG_HGT);
 			else if (vars->map[y][x] == 'E')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->exit_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->exit_img.img_ptr, i * IMG_WTH, j * IMG_HGT);
 			else if (vars->map[y][x] == 'P')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->player_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->player_img.img_ptr, i * IMG_WTH, j * IMG_HGT);
 			x++;
+			i++;
 		}
+		j++;
 		y++;
 	}
 	// mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, vars->p_pos_x * 30, vars->p_pos_y * 30);
@@ -496,10 +506,10 @@ bool	ft_check_move(t_vars *vars, int y, int x)
 	return (true);
 }
 
-void	ft_change_player_pos(t_vars *vars, int y, int x)
+bool	ft_change_player_pos(t_vars *vars, int y, int x)
 {
 	if (ft_check_move(vars, y, x) == false)
-		return ;
+		return (false);
 	ft_printf("MOVE: %d\n", ++(vars->num_moves));
 	ft_swap(&vars->map[vars->p_pos_y][vars->p_pos_x], &vars->map[y][x]);
 	if (vars->exit_pos_y == vars->p_pos_y && vars->exit_pos_x == vars->p_pos_x)
@@ -507,15 +517,42 @@ void	ft_change_player_pos(t_vars *vars, int y, int x)
 	vars->p_pos_y = y;
 	vars->p_pos_x = x;
 	// ft_render(vars);
-	ft_render_pov(vars);
+	return (true);
+}
+
+void	ft_change_pov_values_on_move(t_vars *vars, int y, int x)
+{
+	if (vars->pov_left < 32 || vars->p_pos_x - vars->pov_left < 0 || vars->pov_right < 31 || vars->p_pos_x + vars->pov_right > vars->map_wth)
+	{
+		if (vars->pov_left + x >= 0)
+		{
+			vars->pov_left += x;
+			vars->pov_right = vars->pov_right_max + (vars->pov_left_max - vars->pov_left);
+		}
+	}
+	// if (vars->p_pos_x < 32)
+	// 	vars->pov_left = vars->p_pos_x;
+	// else
+	// 	vars->pov_left = vars->pov_left_max;
+	// if (vars->p_pos_x + vars->pov_right > vars->map_wth)
+	// 	vars->pov_right = vars->map_wth - vars->p_pos_x;
+	// else
+	// 	vars->pov_right = vars->pov_right_max + (vars->pov_left_max - vars->pov_left);
+	ft_printf("%d %d %d %d\n", vars->pov_top, vars->pov_bot, vars->pov_left, vars->pov_right);
 }
 
 int	ft_key_press(int keycode, t_vars *vars)
 {
 	if (keycode == arrow_left)
-		ft_change_player_pos(vars, vars->p_pos_y, vars->p_pos_x - 1);
+	{
+		if (ft_change_player_pos(vars, vars->p_pos_y, vars->p_pos_x - 1) == true)
+			ft_change_pov_values_on_move(vars, 0, -1);
+	}
 	else if (keycode == arrow_right)
-		ft_change_player_pos(vars, vars->p_pos_y, vars->p_pos_x + 1);
+	{
+		if (ft_change_player_pos(vars, vars->p_pos_y, vars->p_pos_x + 1) == true)
+			ft_change_pov_values_on_move(vars, 0, 1);
+	}
 	else if (keycode == arrow_up)
 		ft_change_player_pos(vars, vars->p_pos_y - 1, vars->p_pos_x);
 	else if (keycode == arrow_down)
@@ -524,7 +561,34 @@ int	ft_key_press(int keycode, t_vars *vars)
 		ft_close_game(vars);
 	else
 		return (1);
+	ft_render_pov(vars);
 	return (0);
+}
+
+
+void	ft_get_pov_values(t_vars *vars)
+{
+	//calculate max values
+	vars->pov_top_max = (SCREEN_HGT / IMG_WTH) / 2;
+	vars->pov_bot_max = vars->pov_top_max;
+	vars->pov_left_max = (SCREEN_WTH / IMG_WTH) / 2;
+	vars->pov_right_max = vars->pov_left_max;
+	// ft_printf("%d %d %d %d\n", vars->pov_top_max, vars->pov_bot_max, vars->pov_left_max, vars->pov_right_max);
+
+	//pov range for y axis
+	// vars->pov_top =
+	// vars->pov_bot =
+	
+	//pov range for x axis
+	if (vars->p_pos_x < vars->pov_left_max)
+		vars->pov_left = vars->p_pos_x;
+	else
+		vars->pov_left = vars->pov_left_max;
+	if (vars->map_wth < vars->pov_left_max + vars->pov_right_max)
+		vars->pov_right = vars->map_wth;
+	else
+		vars->pov_right = vars->pov_right_max + (vars->pov_left_max - vars->pov_left);
+	ft_printf("%d %d %d %d\n", vars->pov_top, vars->pov_bot, vars->pov_left, vars->pov_right);
 }
 
 bool	ft_game(t_vars *vars)
@@ -540,6 +604,7 @@ bool	ft_game(t_vars *vars)
 	}
 	if (ft_create_mlx_images(vars) == false)
 		return (false);
+	ft_get_pov_values(vars);
 	mlx_hook(vars->win_ptr, win_closed, 0L, ft_close_window_x, vars);
 	mlx_hook(vars->win_ptr, on_keydown, 1L<<0, ft_key_press, vars);
 	ft_render_pov(vars);
