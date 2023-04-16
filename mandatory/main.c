@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/17 00:33:50 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/17 00:57:52 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,14 +413,16 @@ int	ft_render_pov(t_vars *vars)
 		return (1);
 	i = 0;
 	j = 0;
-	y = 0;
-	while(y < vars->map_hgt)
+	y = vars->p_pos_y - vars->pov_top;
+	if (y < 0)
+		y = 0;
+	while(y >= 0 && y < vars->map_hgt && j < vars->pov_top_max + vars->pov_bot_max)
 	{
 		x = vars->p_pos_x - vars->pov_left;
 		if (x < 0)
 			x = 0;
 		i = 0;
-		while (x >= 0 && x < vars->map_wth && i < 64)
+		while (x >= 0 && x < vars->map_wth && i < vars->pov_left_max + vars->pov_right_max)
 		{
 			if (vars->map[y][x] == '0')
 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, i * IMG_WTH, j * IMG_HGT);
@@ -522,12 +524,20 @@ bool	ft_change_player_pos(t_vars *vars, int y, int x)
 
 void	ft_change_pov_values_on_move(t_vars *vars, int y, int x)
 {
-	if (vars->pov_left < 32 || vars->p_pos_x - vars->pov_left < 0 || vars->pov_right < 31 || vars->p_pos_x + vars->pov_right > vars->map_wth)
+	if (x != 0 && vars->pov_left < vars->pov_left_max || vars->p_pos_x - vars->pov_left < 0 || vars->pov_right < vars->pov_right_max || vars->p_pos_x + vars->pov_right > vars->map_wth)
 	{
 		if (vars->pov_left + x >= 0)
 		{
 			vars->pov_left += x;
 			vars->pov_right = vars->pov_right_max + (vars->pov_left_max - vars->pov_left);
+		}
+	}
+	if (y != 0 && vars->pov_top < vars->pov_top_max || vars->p_pos_y - vars->pov_top < 0 || vars->pov_bot < vars->pov_bot_max || vars->p_pos_y + vars->pov_bot > vars->map_hgt)
+	{
+		if (vars->pov_top + y >= 0)
+		{
+			vars->pov_top += y;
+			vars->pov_bot = vars->pov_bot_max + (vars->pov_top_max - vars->pov_top);
 		}
 	}
 	// if (vars->p_pos_x < 32)
@@ -554,9 +564,15 @@ int	ft_key_press(int keycode, t_vars *vars)
 			ft_change_pov_values_on_move(vars, 0, 1);
 	}
 	else if (keycode == arrow_up)
-		ft_change_player_pos(vars, vars->p_pos_y - 1, vars->p_pos_x);
+	{
+		if (ft_change_player_pos(vars, vars->p_pos_y - 1, vars->p_pos_x) == true)
+			ft_change_pov_values_on_move(vars, -1, 0);
+	}
 	else if (keycode == arrow_down)
-		ft_change_player_pos(vars, vars->p_pos_y + 1, vars->p_pos_x);
+	{
+		if (ft_change_player_pos(vars, vars->p_pos_y + 1, vars->p_pos_x) == true)
+			ft_change_pov_values_on_move(vars, 1, 0);
+	}
 	else if (keycode == key_esc)
 		ft_close_game(vars);
 	else
@@ -573,11 +589,19 @@ void	ft_get_pov_values(t_vars *vars)
 	vars->pov_bot_max = vars->pov_top_max;
 	vars->pov_left_max = (SCREEN_WTH / IMG_WTH) / 2;
 	vars->pov_right_max = vars->pov_left_max;
-	// ft_printf("%d %d %d %d\n", vars->pov_top_max, vars->pov_bot_max, vars->pov_left_max, vars->pov_right_max);
+	ft_printf("%d %d %d %d\n", vars->pov_top_max, vars->pov_bot_max, vars->pov_left_max, vars->pov_right_max);
 
 	//pov range for y axis
 	// vars->pov_top =
 	// vars->pov_bot =
+	if (vars->p_pos_y < vars->pov_top_max)
+		vars->pov_top = vars->p_pos_y;
+	else
+		vars->pov_top = vars->pov_top_max;
+	if (vars->map_hgt < vars->pov_top_max + vars->pov_bot_max)
+		vars->pov_bot = vars->map_hgt;
+	else
+		vars->pov_bot = vars->pov_bot_max + (vars->pov_top_max - vars->pov_top);
 	
 	//pov range for x axis
 	if (vars->p_pos_x < vars->pov_left_max)
