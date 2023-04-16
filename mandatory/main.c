@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 21:25:45 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 21:47:13 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,19 +48,19 @@ bool	ft_check_map_name(char *map_name)
 
 void	ft_free_map(t_vars *vars, int map)
 {
-	int	i;
+	int	y;
 
-	i = 0;
+	y = 0;
 	if (map == 0 && vars->map)
 	{
-		while (vars->map[i])
-			free(vars->map[i++]);
+		while (vars->map[y])
+			free(vars->map[y++]);
 		free(vars->map);
 	}
 	else if (map == 1 && vars->map_cpy)
 	{
-		while (vars->map_cpy[i])
-			free(vars->map_cpy[i++]);
+		while (vars->map_cpy[y])
+			free(vars->map_cpy[y++]);
 		free(vars->map_cpy);
 	}
 }
@@ -68,7 +68,7 @@ void	ft_free_map(t_vars *vars, int map)
 bool	ft_add_line(char *line_read, t_vars *vars)
 {
 	char	**map_new;
-	int		i;
+	int		y;
 
 	vars->map_hgt++;
 	if (vars->map_hgt == 1)
@@ -76,11 +76,11 @@ bool	ft_add_line(char *line_read, t_vars *vars)
 	map_new = (char **)malloc((vars->map_hgt + 1) * sizeof(char *));
 	if (!map_new)
 		return (ft_error("Malloc error", 1));
-	i = -1;
-	while (++i < vars->map_hgt - 1)
-		map_new[i] = vars->map[i];
-	map_new[i++] = line_read;
-	map_new[i] = NULL;
+	y = -1;
+	while (++y < vars->map_hgt - 1)
+		map_new[y] = vars->map[y];
+	map_new[y++] = line_read;
+	map_new[y] = NULL;
 	if (vars->map)
 		free(vars->map);
 	vars->map = map_new;
@@ -112,7 +112,7 @@ bool ft_read_map(char *map_name, t_vars *vars)
 	return (true);
 }
 
-bool	ft_valid_char(char c, t_vars *vars, int row, int col)
+bool	ft_valid_char(char c, t_vars *vars, int y, int x)
 {
 	if (c == '0' || c == '1')
 		return (true);
@@ -120,16 +120,16 @@ bool	ft_valid_char(char c, t_vars *vars, int row, int col)
 		vars->amt_c++;
 	else if(c == 'E' )
 	{
-		vars->exit_pos_row = row;
-		vars->exit_pos_col = col;
+		vars->exit_pos_y = y;
+		vars->exit_pos_x = x;
 		vars->amt_e++;
 		if (vars->amt_e != 1)
 			return (ft_error("Too many of E", 1));
 	}
 	else if (c == 'P')
 	{
-		vars->player_pos_row = row;
-		vars->player_pos_col= col;
+		vars->player_pos_y = y;
+		vars->player_pos_x= x;
 		vars->amt_p++;
 		if (vars->amt_p != 1)
 			return (ft_error("Too many of P", 1));
@@ -139,29 +139,29 @@ bool	ft_valid_char(char c, t_vars *vars, int row, int col)
 	return (true);
 }
 
-bool	ft_check_map_lines(t_vars *vars, int i, int j)
+bool	ft_check_map_lines(t_vars *vars, int y, int x)
 {
-	while (vars->map[i])
+	while (vars->map[y])
 	{
-		j = 0;
-		if (vars->map[i][j++] != '1')
+		x = 0;
+		if (vars->map[y][x++] != '1')
 				return (ft_error("Not surrounded by '1'", 1));
-		while (vars->map[i][j] && vars->map[i][j] != '\n')
+		while (vars->map[y][x] && vars->map[y][x] != '\n')
 		{
-			if (i == 0 || i + 1 == vars->map_hgt)
+			if (x == 0 || y + 1 == vars->map_hgt)
 			{
-				if (vars->map[i][j] != '1')
+				if (vars->map[y][x] != '1')
 					return (ft_error("Not surrounded by '1'", 1));
 			}
-			else if (ft_valid_char(vars->map[i][j], vars, i, j) == false)
+			else if (ft_valid_char(vars->map[y][x], vars, y, x) == false)
 				return (false);
-			j++;
+			x++;
 		}
-		if (j != vars->map_wth)
+		if (x != vars->map_wth)
 			return (ft_error("Not a rectangle", 1));
-		if (vars->map[i][j - 1] != '1')
+		if (vars->map[y][x - 1] != '1')
 			return (ft_error("Not surrounded by '1'", 1));
-		i++;
+		y++;
 	}
 	return (true);
 }
@@ -179,23 +179,23 @@ bool	ft_check_map_chars(t_vars *vars)
 
 bool	ft_copy_map(t_vars *vars)
 {
-	int		i;
+	int		y;
 	
 	vars->map_cpy = (char **)malloc((vars->map_hgt + 1) * sizeof(char *));
 	if (!vars->map_cpy)
 		return (ft_error("Malloc error", 1));
-	i = 0;
-	while (vars->map[i])
+	y = 0;
+	while (vars->map[y])
 	{
-		vars->map_cpy[i] = ft_strdup(vars->map[i]);
-		if (!vars->map_cpy[i])
+		vars->map_cpy[y] = ft_strdup(vars->map[y]);
+		if (!vars->map_cpy[y])
 		{
 			ft_free_map(vars, 1);
 			return (ft_error("Malloc error", 1));
 		}
-		i++;
+		y++;
 	}
-	vars->map_cpy[i] = NULL;
+	vars->map_cpy[y] = NULL;
 	return (true);
 }
 
@@ -211,14 +211,14 @@ bool	ft_check_field(char c, t_vars *vars)
 		return (false);
 	return (true);
 }
-bool	ft_do_direction(t_vars *vars, t_lst **pos_stk, int row, int col)
+bool	ft_do_direction(t_vars *vars, t_lst **pos_stk, int y, int x)
 {
 	t_lst *temp;
 	
-	if (ft_check_field(vars->map_cpy[row][col], vars))
+	if (ft_check_field(vars->map_cpy[y][x], vars))
 	{
-		vars->map_cpy[row][col] = '1';
-		temp = ft_new_node(row, col);
+		vars->map_cpy[y][x] = '1';
+		temp = ft_new_node(y, x);
 		if (!temp)
 		{
 			ft_clear_lst(pos_stk);
@@ -229,17 +229,17 @@ bool	ft_do_direction(t_vars *vars, t_lst **pos_stk, int row, int col)
 	return (true);
 }
 
-bool	ft_check_dir(t_vars *vars, int row, int col, t_lst **pos_stk)
+bool	ft_check_dir(t_vars *vars, int y, int x, t_lst **pos_stk)
 {
-	if (!(row < 0 || row >= vars->map_hgt || col < 0 || col >= vars->map_wth))
+	if (!(y < 0 || y >= vars->map_hgt || x < 0 || x >= vars->map_wth))
 	{
-		if (ft_do_direction(vars, pos_stk, row + 1, col) == false)
+		if (ft_do_direction(vars, pos_stk, y + 1, x) == false)
 			return (false);
-		if (ft_do_direction(vars, pos_stk, row - 1, col) == false)
+		if (ft_do_direction(vars, pos_stk, y - 1, x) == false)
 			return (false);
-		if (ft_do_direction(vars, pos_stk, row, col + 1) == false)
+		if (ft_do_direction(vars, pos_stk, y, x + 1) == false)
 			return (false);
-		if (ft_do_direction(vars, pos_stk, row, col - 1) == false)
+		if (ft_do_direction(vars, pos_stk, y, x - 1) == false)
 			return (false);
 	}
 	return (true);
@@ -250,12 +250,12 @@ bool	ft_find_path(t_vars *vars)
 	t_lst	*pos_stk;
 	t_lst	*temp;
 	
-	pos_stk = ft_new_node(vars->player_pos_row, vars->player_pos_col);
+	pos_stk = ft_new_node(vars->player_pos_y, vars->player_pos_x);
 	if (!pos_stk)
 		return (ft_error("Malloc error", 1));
 	while (pos_stk)
 	{
-		if (ft_check_dir(vars, pos_stk->row, pos_stk->col, &pos_stk) == false)
+		if (ft_check_dir(vars, pos_stk->y, pos_stk->x, &pos_stk) == false)
 			return (false);
 		temp = pos_stk;
 		pos_stk = pos_stk->next;
@@ -362,7 +362,7 @@ int	ft_close_window_x(t_vars *vars)
 /// @param r red 
 /// @param g green
 /// @param b blue
-int	ft_create_color(int t, int r, int g, int b)
+int	ft_create_xor(int t, int r, int g, int b)
 {
 	return(t << 24 | r << 16 | g << 8 | b);
 }
@@ -371,32 +371,32 @@ int	ft_create_color(int t, int r, int g, int b)
 //Checken ob außenkante erreicht wurde primär und secundär die sichtfeldgröße als Maße
 int	ft_render(t_vars *vars)
 {
-	int	i;
-	int	j;
+	int	y;
+	int	x;
 
 	if (!vars->win_ptr)
 		return (1);
-	i = 0;
-	while(i < vars->map_hgt)
+	y = 0;
+	while(y < vars->map_hgt)
 	{
-		j = 0;
-		while (j < vars->map_wth)
+		x = 0;
+		while (x < vars->map_wth)
 		{
-			if (vars->map[i][j] == '0')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
-			else if (vars->map[i][j] == '1')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
-			else if (vars->map[i][j] == 'C')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->collect_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
-			else if (vars->map[i][j] == 'E')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->exit_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
-			else if (vars->map[i][j] == 'P')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->player_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
-			j++;
+			if (vars->map[y][x] == '0')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+			else if (vars->map[y][x] == '1')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+			else if (vars->map[y][x] == 'C')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->collect_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+			else if (vars->map[y][x] == 'E')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->exit_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+			else if (vars->map[y][x] == 'P')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->player_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+			x++;
 		}
-		i++;
+		y++;
 	}
-	// mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, vars->player_pos_col * 30, vars->player_pos_row * 30);
+	// mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, vars->player_pos_x * 30, vars->player_pos_y * 30);
 	return (0);
 }
 
@@ -437,55 +437,55 @@ void	ft_swap(char *a, char *b)
 }
 
 //make sure the exit doesnt change position if you nove over it
-bool	ft_check_move(t_vars *vars, int row, int col)
+bool	ft_check_move(t_vars *vars, int y, int x)
 {
 	char c;
 
-	c = vars->map[row][col];
+	c = vars->map[y][x];
 	// ft_printf("CHAR: %c\n", c);
-	// ft_printf("row: %d\n", row);
-	// ft_printf("col: %d\n", col);
+	// ft_printf("y: %d\n", y);
+	// ft_printf("x: %d\n", x);
 	if (c == '0')
 		return (true);
 	else if (c == 'C')
 	{
 		vars->taken_c++;
-		vars->map[row][col] = '0';
+		vars->map[y][x] = '0';
 	}
 	else if (c == 'E')
 	{
 		if (vars->taken_c == vars->amt_c)
 			ft_close_game(vars);
-		else if (vars->exit_pos_row == row && vars->exit_pos_col == col)
-			vars->map[row][col] = '0';
+		else if (vars->exit_pos_y == y && vars->exit_pos_x == x)
+			vars->map[y][x] = '0';
 	}
 	else
 		return (false);
 	return (true);
 }
 
-void	ft_change_player_pos(t_vars *vars, int row, int col)
+void	ft_change_player_pos(t_vars *vars, int y, int x)
 {
-	if (ft_check_move(vars, row, col) == false)
+	if (ft_check_move(vars, y, x) == false)
 		return ;
 	ft_printf("MOVE: %d\n", ++(vars->num_moves));
-	ft_swap(&vars->map[vars->player_pos_row][vars->player_pos_col], &vars->map[row][col]);
-	if (vars->exit_pos_row == vars->player_pos_row && vars->exit_pos_col == vars->player_pos_col)
-		vars->map[vars->exit_pos_row][vars->exit_pos_col] = 'E';
-	vars->player_pos_row = row;
-	vars->player_pos_col = col;
+	ft_swap(&vars->map[vars->player_pos_y][vars->player_pos_x], &vars->map[y][x]);
+	if (vars->exit_pos_y == vars->player_pos_y && vars->exit_pos_x == vars->player_pos_x)
+		vars->map[vars->exit_pos_y][vars->exit_pos_x] = 'E';
+	vars->player_pos_y = y;
+	vars->player_pos_x = x;
 }
 
 int	ft_key_press(int keycode, t_vars *vars)
 {
 	if (keycode == arrow_left)
-		ft_change_player_pos(vars, vars->player_pos_row, vars->player_pos_col - 1);
+		ft_change_player_pos(vars, vars->player_pos_y, vars->player_pos_x - 1);
 	else if (keycode == arrow_right)
-		ft_change_player_pos(vars, vars->player_pos_row, vars->player_pos_col + 1);
+		ft_change_player_pos(vars, vars->player_pos_y, vars->player_pos_x + 1);
 	else if (keycode == arrow_up)
-		ft_change_player_pos(vars, vars->player_pos_row - 1, vars->player_pos_col);
+		ft_change_player_pos(vars, vars->player_pos_y - 1, vars->player_pos_x);
 	else if (keycode == arrow_down)
-		ft_change_player_pos(vars, vars->player_pos_row + 1, vars->player_pos_col);
+		ft_change_player_pos(vars, vars->player_pos_y + 1, vars->player_pos_x);
 	else if (keycode == key_esc)
 		ft_close_game(vars);
 	else
@@ -498,7 +498,7 @@ bool	ft_game(t_vars *vars)
 	vars->mlx_ptr = mlx_init();
 	if (!vars->mlx_ptr)
 		return (ft_error("MLX init failed", 1));
-	vars->win_ptr = mlx_new_window(vars->mlx_ptr, 1920, 1080, "so_long");
+	vars->win_ptr = mlx_new_window(vars->mlx_ptr, SCREEN_WTH, SCREEN_HGT, "so_long");
 	if (!vars->mlx_ptr)
 	{
 		free(vars->mlx_ptr);
@@ -514,6 +514,8 @@ bool	ft_game(t_vars *vars)
 }
 
 
+//y == ys -> top down
+//x == xums -> left right
 int	main(int argc, char **argv)
 {
 	t_vars *vars;

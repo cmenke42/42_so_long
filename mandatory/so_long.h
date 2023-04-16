@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 20:51:27 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 21:43:22 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,15 @@
 #define EXIT_IMG "textures/exit.xpm"
 #define PLAYER_IMG "textures/player.xpm"
 #define COLLECT_IMG "textures/collectable.xpm"
+#define SCREEN_WTH 1920
+#define SCREEN_HGT 1080
 #define	IMG_WTH 30
 #define	IMG_HGT 30
 
 typedef struct s_lst
 {
-	int				row;
-	int				col;
+	int				y;
+	int				x;
 	struct s_lst	*next;
 }				t_lst;
 
@@ -69,10 +71,10 @@ typedef struct s_vars
 	//height and width are exact
 	int		map_hgt;
 	int		map_wth;
-	int		player_pos_row;
-	int		player_pos_col;
-	int		exit_pos_row;
-	int		exit_pos_col;
+	int		player_pos_y;
+	int		player_pos_x;
+	int		exit_pos_y;
+	int		exit_pos_x;
 	int		num_moves;
 	int		amt_p;
 	int		amt_e;

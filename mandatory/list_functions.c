@@ -3,24 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   list_functions.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmenke <cmenke@student.42wolfsburg.de>     +#+  +:+       +#+        */
+/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:44:13 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/08 21:38:05 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 21:47:39 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-t_lst	*ft_new_node(int row, int col)
+t_lst	*ft_new_node(int y, int x)
 {
 	t_lst *node;
 
 	node = malloc(sizeof(t_lst));
 	if (!node)
 		return (NULL);
-	node->row = row;
-	node->col = col;
+	node->y = y;
+	node->x = x;
 	node->next = NULL;
 	return (node);
 }
