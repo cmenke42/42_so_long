@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 21:43:22 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 21:49:32 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,8 @@ typedef struct s_vars
 	//height and width are exact
 	int		map_hgt;
 	int		map_wth;
-	int		player_pos_y;
-	int		player_pos_x;
+	int		p_pos_y;
+	int		p_pos_x;
 	int		exit_pos_y;
 	int		exit_pos_x;
 	int		num_moves;

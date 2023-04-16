@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 21:47:13 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 21:58:53 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,8 +128,8 @@ bool	ft_valid_char(char c, t_vars *vars, int y, int x)
 	}
 	else if (c == 'P')
 	{
-		vars->player_pos_y = y;
-		vars->player_pos_x= x;
+		vars->p_pos_y = y;
+		vars->p_pos_x= x;
 		vars->amt_p++;
 		if (vars->amt_p != 1)
 			return (ft_error("Too many of P", 1));
@@ -250,7 +250,7 @@ bool	ft_find_path(t_vars *vars)
 	t_lst	*pos_stk;
 	t_lst	*temp;
 	
-	pos_stk = ft_new_node(vars->player_pos_y, vars->player_pos_x);
+	pos_stk = ft_new_node(vars->p_pos_y, vars->p_pos_x);
 	if (!pos_stk)
 		return (ft_error("Malloc error", 1));
 	while (pos_stk)
@@ -367,9 +367,41 @@ int	ft_create_xor(int t, int r, int g, int b)
 	return(t << 24 | r << 16 | g << 8 | b);
 }
 
+// int	ft_render(t_vars *vars)
+// {
+// 	int	y;
+// 	int	x;
+
+// 	if (!vars->win_ptr)
+// 		return (1);
+// 	y = 0;
+// 	while(y < vars->map_hgt)
+// 	{
+// 		x = 0;
+// 		while (x < vars->map_wth)
+// 		{
+// 			if (vars->map[y][x] == '0')
+// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+// 			else if (vars->map[y][x] == '1')
+// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+// 			else if (vars->map[y][x] == 'C')
+// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->collect_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+// 			else if (vars->map[y][x] == 'E')
+// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->exit_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+// 			else if (vars->map[y][x] == 'P')
+// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->player_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
+// 			x++;
+// 		}
+// 		y++;
+// 	}
+// 	// mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, vars->p_pos_x * 30, vars->p_pos_y * 30);
+// 	return (0);
+// }
+
+
 //mit offset starten. 1920 / 30 und 1080 / 30 als Sichtfeld.
 //Checken ob außenkante erreicht wurde primär und secundär die sichtfeldgröße als Maße
-int	ft_render(t_vars *vars)
+int	ft_render_pov(t_vars *vars)
 {
 	int	y;
 	int	x;
@@ -396,7 +428,7 @@ int	ft_render(t_vars *vars)
 		}
 		y++;
 	}
-	// mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, vars->player_pos_x * 30, vars->player_pos_y * 30);
+	// mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, vars->p_pos_x * 30, vars->p_pos_y * 30);
 	return (0);
 }
 
@@ -469,23 +501,25 @@ void	ft_change_player_pos(t_vars *vars, int y, int x)
 	if (ft_check_move(vars, y, x) == false)
 		return ;
 	ft_printf("MOVE: %d\n", ++(vars->num_moves));
-	ft_swap(&vars->map[vars->player_pos_y][vars->player_pos_x], &vars->map[y][x]);
-	if (vars->exit_pos_y == vars->player_pos_y && vars->exit_pos_x == vars->player_pos_x)
+	ft_swap(&vars->map[vars->p_pos_y][vars->p_pos_x], &vars->map[y][x]);
+	if (vars->exit_pos_y == vars->p_pos_y && vars->exit_pos_x == vars->p_pos_x)
 		vars->map[vars->exit_pos_y][vars->exit_pos_x] = 'E';
-	vars->player_pos_y = y;
-	vars->player_pos_x = x;
+	vars->p_pos_y = y;
+	vars->p_pos_x = x;
+	// ft_render(vars);
+	ft_render_pov(vars);
 }
 
 int	ft_key_press(int keycode, t_vars *vars)
 {
 	if (keycode == arrow_left)
-		ft_change_player_pos(vars, vars->player_pos_y, vars->player_pos_x - 1);
+		ft_change_player_pos(vars, vars->p_pos_y, vars->p_pos_x - 1);
 	else if (keycode == arrow_right)
-		ft_change_player_pos(vars, vars->player_pos_y, vars->player_pos_x + 1);
+		ft_change_player_pos(vars, vars->p_pos_y, vars->p_pos_x + 1);
 	else if (keycode == arrow_up)
-		ft_change_player_pos(vars, vars->player_pos_y - 1, vars->player_pos_x);
+		ft_change_player_pos(vars, vars->p_pos_y - 1, vars->p_pos_x);
 	else if (keycode == arrow_down)
-		ft_change_player_pos(vars, vars->player_pos_y + 1, vars->player_pos_x);
+		ft_change_player_pos(vars, vars->p_pos_y + 1, vars->p_pos_x);
 	else if (keycode == key_esc)
 		ft_close_game(vars);
 	else
@@ -508,7 +542,9 @@ bool	ft_game(t_vars *vars)
 		return (false);
 	mlx_hook(vars->win_ptr, win_closed, 0L, ft_close_window_x, vars);
 	mlx_hook(vars->win_ptr, on_keydown, 1L<<0, ft_key_press, vars);
-	mlx_loop_hook(vars->mlx_ptr, ft_render, vars);
+	ft_render_pov(vars);
+	// ft_render(vars);
+	// mlx_loop_hook(vars->mlx_ptr, ft_render, vars);
 	mlx_loop(vars->mlx_ptr);
 	return (true);
 }
