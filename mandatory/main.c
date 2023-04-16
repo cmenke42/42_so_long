@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
+/*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 18:42:11 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 17:48:06 by user             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -364,6 +364,8 @@ int	ft_create_color(int t, int r, int g, int b)
 // 	}
 // 	return (0);
 // }
+//mit offset starten. 1920 / 30 und 1080 / 30 als Sichtfeld.
+//Checken ob außenkante erreicht wurde primär und secundär die sichtfeldgröße als Maße
 int	ft_render(t_vars *vars)
 {
 	int	i;
