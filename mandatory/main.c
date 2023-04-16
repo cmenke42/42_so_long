@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 21:01:09 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 21:25:45 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -303,13 +303,36 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 //mlx things
 ///
 
+bool	ft_destroy_mlx_images(t_vars *vars, bool print_error)
+{
+	if (print_error == true)
+	{
+		vars->exit_code = 1;
+		ft_error("Error creating mlx images", 1);
+	}
+	if (vars->path_img.img_ptr)
+		mlx_destroy_image(vars->mlx_ptr, vars->path_img.img_ptr);
+	if (vars->wall_img.img_ptr)
+		mlx_destroy_image(vars->mlx_ptr, vars->wall_img.img_ptr);
+	if (vars->player_img.img_ptr)
+		mlx_destroy_image(vars->mlx_ptr, vars->player_img.img_ptr);
+	if (vars->collect_img.img_ptr)
+		mlx_destroy_image(vars->mlx_ptr, vars->collect_img.img_ptr);
+	if (vars->exit_img.img_ptr)
+		mlx_destroy_image(vars->mlx_ptr, vars->exit_img.img_ptr);
+	return (false);
+}
+
 void	ft_close_game(t_vars *vars)
 {
 	int	exit_code;
 
 	exit_code = vars->exit_code;
+	ft_destroy_mlx_images(vars, false);
 	mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
 	vars->win_ptr = NULL;
+	if (vars->mlx_ptr)
+		free(vars->mlx_ptr);
 	ft_free_map(vars, 0);
 	free(vars);
 	exit(exit_code);
@@ -344,28 +367,6 @@ int	ft_create_color(int t, int r, int g, int b)
 	return(t << 24 | r << 16 | g << 8 | b);
 }
 
-// int	ft_render(t_vars *vars)
-// {
-// 	int	color;
-// 	int i;
-// 	int j;
-
-// 	color = ft_create_color(0,255,0,0);
-// 	if (!vars->win_ptr)
-// 		return (1);
-// 	i = 0;
-// 	while (i < 1920)
-// 	{
-// 		j = 0;
-// 		while (j < 1080)
-// 		{
-// 			mlx_pixel_put(vars->mlx_ptr, vars->win_ptr, i, j, color);
-// 			j += 20;
-// 		}
-// 		i += 30;
-// 	}
-// 	return (0);
-// }
 //mit offset starten. 1920 / 30 und 1080 / 30 als Sichtfeld.
 //Checken ob außenkante erreicht wurde primär und secundär die sichtfeldgröße als Maße
 int	ft_render(t_vars *vars)
@@ -382,15 +383,15 @@ int	ft_render(t_vars *vars)
 		while (j < vars->map_wth)
 		{
 			if (vars->map[i][j] == '0')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, j * 30, i * 30);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
 			else if (vars->map[i][j] == '1')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, j * 30, i * 30);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
 			else if (vars->map[i][j] == 'C')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->collect_img.img_ptr, j * 30, i * 30);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->collect_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
 			else if (vars->map[i][j] == 'E')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->exit_img.img_ptr, j * 30, i * 30);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->exit_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
 			else if (vars->map[i][j] == 'P')
-				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->player_img.img_ptr, j * 30, i * 30);
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->player_img.img_ptr, j * IMG_WTH, i * IMG_HGT);
 			j++;
 		}
 		i++;
@@ -403,35 +404,27 @@ bool	ft_create_mlx_images(t_vars *vars)
 {
 	int	wth;
 	int	hgt;
-	void *image;
 
 	wth = IMG_WTH;
 	hgt = IMG_HGT;
 	
 	//free the rest if one lower gets failed
-	//path
 	vars->path_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, PATH_IMG, &wth, &hgt);
 	if (!vars->path_img.img_ptr)
-		return (false);
-	// vars->path_img.address = mlx_get_data_addr(vars->path_img.img_ptr, &(vars->path_img.bits_per_pixel),
-	// 	&(vars->path_img.size_line), &(vars->path_img.endian));
-	//wall
+		return (ft_destroy_mlx_images(vars, true));
 	vars->wall_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, WALL_IMG, &wth, &hgt);
 	if (!vars->wall_img.img_ptr)
-		return (false);
-	//player
+		return (ft_destroy_mlx_images(vars, true));
 	vars->player_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, PLAYER_IMG, &wth, &hgt);
 	if (!vars->player_img.img_ptr)
-		return (false);
-	//collectable
+		return (ft_destroy_mlx_images(vars, true));
 	vars->collect_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, COLLECT_IMG, &wth, &hgt);
 	if (!vars->collect_img.img_ptr)
-		return (false);
-	//exit
+		return (ft_destroy_mlx_images(vars, true));
 	vars->exit_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, EXIT_IMG, &wth, &hgt);
 	if (!vars->exit_img.img_ptr)
-		return (false);
-	return (0);
+		return (ft_destroy_mlx_images(vars, true));
+	return (true);
 }
 
 void	ft_swap(char *a, char *b)
@@ -511,12 +504,12 @@ bool	ft_game(t_vars *vars)
 		free(vars->mlx_ptr);
 		return (ft_error("MLX init failed", 1));
 	}
-	ft_create_mlx_images(vars);
+	if (ft_create_mlx_images(vars) == false)
+		return (false);
 	mlx_hook(vars->win_ptr, win_closed, 0L, ft_close_window_x, vars);
 	mlx_hook(vars->win_ptr, on_keydown, 1L<<0, ft_key_press, vars);
 	mlx_loop_hook(vars->mlx_ptr, ft_render, vars);
 	mlx_loop(vars->mlx_ptr);
-	free(vars->mlx_ptr);
 	return (true);
 }
 
