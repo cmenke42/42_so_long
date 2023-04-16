@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: user <user@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 17:48:06 by user             ###   ########.fr       */
+/*   Updated: 2023/04/16 21:01:09 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,8 @@ bool	ft_valid_char(char c, t_vars *vars, int row, int col)
 		vars->amt_c++;
 	else if(c == 'E' )
 	{
+		vars->exit_pos_row = row;
+		vars->exit_pos_col = col;
 		vars->amt_e++;
 		if (vars->amt_e != 1)
 			return (ft_error("Too many of E", 1));
@@ -383,6 +385,12 @@ int	ft_render(t_vars *vars)
 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, j * 30, i * 30);
 			else if (vars->map[i][j] == '1')
 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, j * 30, i * 30);
+			else if (vars->map[i][j] == 'C')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->collect_img.img_ptr, j * 30, i * 30);
+			else if (vars->map[i][j] == 'E')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->exit_img.img_ptr, j * 30, i * 30);
+			else if (vars->map[i][j] == 'P')
+				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->player_img.img_ptr, j * 30, i * 30);
 			j++;
 		}
 		i++;
@@ -412,8 +420,17 @@ bool	ft_create_mlx_images(t_vars *vars)
 	if (!vars->wall_img.img_ptr)
 		return (false);
 	//player
+	vars->player_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, PLAYER_IMG, &wth, &hgt);
+	if (!vars->player_img.img_ptr)
+		return (false);
 	//collectable
+	vars->collect_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, COLLECT_IMG, &wth, &hgt);
+	if (!vars->collect_img.img_ptr)
+		return (false);
 	//exit
+	vars->exit_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, EXIT_IMG, &wth, &hgt);
+	if (!vars->exit_img.img_ptr)
+		return (false);
 	return (0);
 }
 
@@ -431,10 +448,13 @@ bool	ft_check_move(t_vars *vars, int row, int col)
 {
 	char c;
 
-	c = vars->map[row][col] == '0';
-	if(c == '0')
+	c = vars->map[row][col];
+	// ft_printf("CHAR: %c\n", c);
+	// ft_printf("row: %d\n", row);
+	// ft_printf("col: %d\n", col);
+	if (c == '0')
 		return (true);
-	else if(c == 'C')
+	else if (c == 'C')
 	{
 		vars->taken_c++;
 		vars->map[row][col] = '0';
@@ -443,6 +463,8 @@ bool	ft_check_move(t_vars *vars, int row, int col)
 	{
 		if (vars->taken_c == vars->amt_c)
 			ft_close_game(vars);
+		else if (vars->exit_pos_row == row && vars->exit_pos_col == col)
+			vars->map[row][col] = '0';
 	}
 	else
 		return (false);
@@ -451,10 +473,12 @@ bool	ft_check_move(t_vars *vars, int row, int col)
 
 void	ft_change_player_pos(t_vars *vars, int row, int col)
 {
-
 	if (ft_check_move(vars, row, col) == false)
 		return ;
+	ft_printf("MOVE: %d\n", ++(vars->num_moves));
 	ft_swap(&vars->map[vars->player_pos_row][vars->player_pos_col], &vars->map[row][col]);
+	if (vars->exit_pos_row == vars->player_pos_row && vars->exit_pos_col == vars->player_pos_col)
+		vars->map[vars->exit_pos_row][vars->exit_pos_col] = 'E';
 	vars->player_pos_row = row;
 	vars->player_pos_col = col;
 }

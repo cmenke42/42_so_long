@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 18:27:26 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/16 20:51:27 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@
 
 #define WALL_IMG "textures/wall2.xpm"
 #define PATH_IMG "textures/path.xpm"
+#define EXIT_IMG "textures/exit.xpm"
+#define PLAYER_IMG "textures/player.xpm"
+#define COLLECT_IMG "textures/collectable.xpm"
 #define	IMG_WTH 30
 #define	IMG_HGT 30
 
@@ -68,6 +71,9 @@ typedef struct s_vars
 	int		map_wth;
 	int		player_pos_row;
 	int		player_pos_col;
+	int		exit_pos_row;
+	int		exit_pos_col;
+	int		num_moves;
 	int		amt_p;
 	int		amt_e;
 	int		amt_c;
