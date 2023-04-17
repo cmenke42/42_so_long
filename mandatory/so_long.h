@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/17 04:21:40 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/17 23:19:39 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,10 @@ typedef struct s_lst
 	struct s_lst	*next;
 }				t_lst;
 
-enum	e_events
+enum	e_keys_events
 {
 	on_keydown = 2,
-	win_closed = 17
-};
-
-enum	e_keys
-{
+	win_closed = 17,
 	key_esc = 53,
 	arrow_left = 123,
 	arrow_right = 124,
@@ -108,5 +104,17 @@ t_lst	*ft_new_node(int row, int col);
 t_lst	*ft_last_node(t_lst *lst);
 void	ft_node_add_back(t_lst **lst, t_lst *node);
 void	ft_clear_lst(t_lst **lst);
+//read_map.c
+bool	ft_read_map(char *map_name, t_vars *vars);
+//check_map_format.c
+bool	ft_check_map_name(char *map_name);
+bool	ft_check_map_chars(t_vars *vars);
+//check_map_path.c
+bool	ft_copy_map(t_vars *vars);
+bool	ft_find_path(t_vars *vars);
+//close_free_error.c
+void	ft_free_map(t_vars *vars, int map);
+bool	ft_error_exit(char	*error_text, int exit_code);
+bool	ft_error(char	*error_text, int exit_code);
 
 #endif

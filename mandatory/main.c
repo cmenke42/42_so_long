@@ -6,282 +6,12 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/17 04:23:44 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/17 23:18:41 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 
-bool	ft_error_exit(char	*error_text, int exit_code)
-{
-		write(2, "Error\n", 6);
-		ft_putendl_fd(error_text, 2);
-		ft_putendl_fd("\n", 2);
-		return (exit_code);
-}
-
-bool	ft_error(char	*error_text, int exit_code)
-{
-	if (exit_code != 0)
-	{
-		write(2, "Error\n", 6);
-		ft_putendl_fd(error_text, 2);
-		ft_putendl_fd("\n", 2);
-		return (false);
-		// exit(exit_code);
-	}
-	return (true);
-}
-
-bool	ft_check_map_name(char *map_name)
-{
-	int	name_len;
-
-	name_len = ft_strlen(map_name);
-	if (name_len > 4)
-	{
-		if (ft_strncmp(map_name + (name_len - 4), ".ber", 4) == 0)
-			return (true);
-	}
-	return (ft_error("Wrong map Name", 1));
-}
-
-void	ft_free_map(t_vars *vars, int map)
-{
-	int	y;
-
-	y = 0;
-	if (map == 0 && vars->map)
-	{
-		while (vars->map[y])
-			free(vars->map[y++]);
-		free(vars->map);
-	}
-	else if (map == 1 && vars->map_cpy)
-	{
-		while (vars->map_cpy[y])
-			free(vars->map_cpy[y++]);
-		free(vars->map_cpy);
-	}
-}
-
-bool	ft_add_line(char *line_read, t_vars *vars)
-{
-	char	**map_new;
-	int		y;
-
-	vars->map_hgt++;
-	if (vars->map_hgt == 1)
-		vars->map_wth = ft_strlen(line_read) - 1;
-	map_new = (char **)malloc((vars->map_hgt + 1) * sizeof(char *));
-	if (!map_new)
-		return (ft_error("Malloc error", 1));
-	y = -1;
-	while (++y < vars->map_hgt - 1)
-		map_new[y] = vars->map[y];
-	map_new[y++] = line_read;
-	map_new[y] = NULL;
-	if (vars->map)
-		free(vars->map);
-	vars->map = map_new;
-	return (true);
-}
-
-bool ft_read_map(char *map_name, t_vars *vars)
-{
-	int		fd;
-	char	*line_read;
-	
-	fd = open(map_name, O_RDONLY);
-	if (fd <= -1)
-		return (ft_error("Error opening the file", 1));
-	line_read = get_next_line(fd);
-	while (line_read)
-	{
-		if (ft_add_line(line_read, vars) == true)
-			line_read = get_next_line(fd);
-		else
-		{
-			if (line_read)
-				free(line_read);
-			line_read = get_next_line(-1);
-			return (false);
-		}
-	}
-	close(fd);
-	return (true);
-}
-
-bool	ft_valid_char(char c, t_vars *vars, int y, int x)
-{
-	if (c == '0' || c == '1')
-		return (true);
-	else if (c == 'C')
-		vars->amt_c++;
-	else if(c == 'E' )
-	{
-		vars->exit_pos_y = y;
-		vars->exit_pos_x = x;
-		vars->amt_e++;
-		if (vars->amt_e != 1)
-			return (ft_error("Too many of E", 1));
-	}
-	else if (c == 'P')
-	{
-		vars->p_pos_y = y;
-		vars->p_pos_x= x;
-		vars->amt_p++;
-		if (vars->amt_p != 1)
-			return (ft_error("Too many of P", 1));
-	}
-	else
-		return (ft_error("Invalid chars", 1));
-	return (true);
-}
-
-bool	ft_check_map_lines(t_vars *vars, int y, int x)
-{
-	while (vars->map[y])
-	{
-		x = 0;
-		if (vars->map[y][x++] != '1')
-				return (ft_error("Not surrounded by '1'", 1));
-		while (vars->map[y][x] && vars->map[y][x] != '\n')
-		{
-			if (x == 0 || y + 1 == vars->map_hgt)
-			{
-				if (vars->map[y][x] != '1')
-					return (ft_error("Not surrounded by '1'", 1));
-			}
-			else if (ft_valid_char(vars->map[y][x], vars, y, x) == false)
-				return (false);
-			x++;
-		}
-		if (x != vars->map_wth)
-			return (ft_error("Not a rectangle", 1));
-		if (vars->map[y][x - 1] != '1')
-			return (ft_error("Not surrounded by '1'", 1));
-		y++;
-	}
-	return (true);
-}
-
-bool	ft_check_map_chars(t_vars *vars)
-{
-	if (vars->map_wth < 3 || vars->map_hgt < 3)
-		return (ft_error("Map too small", 1));
-	if (ft_check_map_lines(vars, 0, 0) == false)
-		return (false);
-	if (vars->amt_e != 1 || vars->amt_p != 1 || vars->amt_c < 1)
-		return (ft_error("Wrong ammount of E P or C", 1));
-	return (true);
-}
-
-bool	ft_copy_map(t_vars *vars)
-{
-	int		y;
-	
-	vars->map_cpy = (char **)malloc((vars->map_hgt + 1) * sizeof(char *));
-	if (!vars->map_cpy)
-		return (ft_error("Malloc error", 1));
-	y = 0;
-	while (vars->map[y])
-	{
-		vars->map_cpy[y] = ft_strdup(vars->map[y]);
-		if (!vars->map_cpy[y])
-		{
-			ft_free_map(vars, 1);
-			return (ft_error("Malloc error", 1));
-		}
-		y++;
-	}
-	vars->map_cpy[y] = NULL;
-	return (true);
-}
-
-bool	ft_check_field(char c, t_vars *vars)
-{
-	if (c == '0')
-		return (true);
-	else if (c == '1')
-		return (false);
-	else if (c == 'C' || c == 'E' || c == 'P')
-		vars->amt_p_e_c++;
-	else
-		return (false);
-	return (true);
-}
-bool	ft_do_direction(t_vars *vars, t_lst **pos_stk, int y, int x)
-{
-	t_lst *temp;
-	
-	if (ft_check_field(vars->map_cpy[y][x], vars))
-	{
-		vars->map_cpy[y][x] = '1';
-		temp = ft_new_node(y, x);
-		if (!temp)
-		{
-			ft_clear_lst(pos_stk);
-			return (ft_error("Malloc error", 1));
-		}
-		ft_node_add_back(pos_stk, temp);
-	}
-	return (true);
-}
-
-bool	ft_check_dir(t_vars *vars, int y, int x, t_lst **pos_stk)
-{
-	if (!(y < 0 || y >= vars->map_hgt || x < 0 || x >= vars->map_wth))
-	{
-		if (ft_do_direction(vars, pos_stk, y + 1, x) == false)
-			return (false);
-		if (ft_do_direction(vars, pos_stk, y - 1, x) == false)
-			return (false);
-		if (ft_do_direction(vars, pos_stk, y, x + 1) == false)
-			return (false);
-		if (ft_do_direction(vars, pos_stk, y, x - 1) == false)
-			return (false);
-	}
-	return (true);
-}
-
-bool	ft_find_path(t_vars *vars)
-{
-	t_lst	*pos_stk;
-	t_lst	*temp;
-	
-	pos_stk = ft_new_node(vars->p_pos_y, vars->p_pos_x);
-	if (!pos_stk)
-		return (ft_error("Malloc error", 1));
-	while (pos_stk)
-	{
-		if (ft_check_dir(vars, pos_stk->y, pos_stk->x, &pos_stk) == false)
-			return (false);
-		temp = pos_stk;
-		pos_stk = pos_stk->next;
-		free(temp);
-	}
-	ft_clear_lst(&pos_stk);
-	if (vars->amt_p + vars->amt_e + vars->amt_c != vars->amt_p_e_c)
-		return (ft_error("No valid path", 1));
-	return (true);
-}
-
-bool	ft_check_path(t_vars *vars)
-{
-	if (ft_copy_map(vars) == false)
-		return (false);
-	if (ft_find_path(vars) == false)
-	{
-		ft_free_map(vars, 1);
-		return (false);
-	}
-	// int i = 0;
-	// while (vars->map_cpy[i])
-	// 	ft_printf("%s", vars->map_cpy[i++]);
-	ft_free_map(vars, 1);
-	return (true);
-}
 bool	ft_check_map(char *map_name, t_vars *vars)
 {
 	if (ft_check_map_name(map_name) == false)
@@ -290,14 +20,16 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 		return (false);
 	if (ft_check_map_chars(vars) == false)
 		return (false);
-	if (ft_check_path(vars) == false)
+	if (ft_copy_map(vars) == false)
 		return (false);
+	if (ft_find_path(vars) == false)
+	{
+		ft_free_map(vars, 1);
+		return (false);
+	}
+	ft_free_map(vars, 1);
 	return (true);
 }
-
-/////
-//above all for error and map checking
-////
 
 ///
 //mlx things
@@ -616,7 +348,7 @@ void	ft_get_pov_values(t_vars *vars)
 			vars->pov_top = vars->pov_top_max;
 			vars->pov_bot = vars->pov_bot_max;
 		}
-	}	
+	}
 	//pov range for x axis
 	if (vars->pov_left_max + vars->pov_right_max < vars->map_wth)
 	{
