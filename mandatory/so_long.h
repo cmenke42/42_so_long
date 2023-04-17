@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 22:37:12 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/17 02:13:15 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 #define COLLECT_IMG "textures/collectable.xpm"
 #define SCREEN_WTH 1920
 #define SCREEN_HGT 1080
+// #define SCREEN_WTH 900
+// #define SCREEN_HGT 300
 #define	IMG_WTH 30
 #define	IMG_HGT 30
 
