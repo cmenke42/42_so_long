@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/17 23:19:39 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/17 23:43:26 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,11 @@ enum	e_keys_events
 {
 	on_keydown = 2,
 	win_closed = 17,
-	key_esc = 53,
-	arrow_left = 123,
-	arrow_right = 124,
-	arrow_up = 126,
-	arrow_down = 125
+	esc = 53,
+	arrow_l = 123,
+	arrow_r = 124,
+	arrow_u = 126,
+	arrow_d = 125
 };
 
 //variables for each texture | mlx_img

@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/17 23:18:41 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/17 23:46:18 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,11 @@ void	ft_close_game(t_vars *vars)
 	exit(exit_code);
 }
 
-int	ft_close_window_esc(int keycode, t_vars *vars)
+int	ft_close_window_esc(int key, t_vars *vars)
 {
-	if (keycode == key_esc)
+	if (key == esc)
 	{
 		ft_close_game(vars);
-		// mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
 		return (0);
 	}
 	return (1);
@@ -83,7 +82,6 @@ int	ft_close_window_esc(int keycode, t_vars *vars)
 
 int	ft_close_window_x(t_vars *vars)
 {
-	// mlx_destroy_window(vars->mlx_ptr, vars->win_ptr);
 	ft_close_game(vars);
 	return (0);
 }
@@ -94,42 +92,10 @@ int	ft_close_window_x(t_vars *vars)
 /// @param r red 
 /// @param g green
 /// @param b blue
-int	ft_create_xor(int t, int r, int g, int b)
+int	ft_create_color(int t, int r, int g, int b)
 {
 	return(t << 24 | r << 16 | g << 8 | b);
 }
-
-// int	ft_render(t_vars *vars)
-// {
-// 	int	y;
-// 	int	x;
-
-// 	if (!vars->win_ptr)
-// 		return (1);
-// 	y = 0;
-// 	while(y < vars->map_hgt)
-// 	{
-// 		x = 0;
-// 		while (x < vars->map_wth)
-// 		{
-// 			if (vars->map[y][x] == '0')
-// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
-// 			else if (vars->map[y][x] == '1')
-// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->wall_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
-// 			else if (vars->map[y][x] == 'C')
-// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->collect_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
-// 			else if (vars->map[y][x] == 'E')
-// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->exit_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
-// 			else if (vars->map[y][x] == 'P')
-// 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->player_img.img_ptr, x * IMG_WTH, y * IMG_HGT);
-// 			x++;
-// 		}
-// 		y++;
-// 	}
-// 	// mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, vars->p_pos_x * 30, vars->p_pos_y * 30);
-// 	return (0);
-// }
-
 
 //mit offset starten. 1920 / 30 und 1080 / 30 als Sichtfeld.
 //Checken ob außenkante erreicht wurde primär und secundär die sichtfeldgröße als Maße
@@ -143,7 +109,6 @@ int	ft_render_pov(t_vars *vars)
 
 	if (!vars->win_ptr)
 		return (1);
-	i = 0;
 	j = 0;
 	if (vars->pov_top != 0 && vars->p_pos_y - vars->pov_top >= 0)
 		y = vars->p_pos_y - vars->pov_top;
@@ -174,7 +139,6 @@ int	ft_render_pov(t_vars *vars)
 		j++;
 		y++;
 	}
-	// mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, vars->p_pos_x * 30, vars->p_pos_y * 30);
 	return (0);
 }
 
@@ -186,7 +150,6 @@ bool	ft_create_mlx_images(t_vars *vars)
 	wth = IMG_WTH;
 	hgt = IMG_HGT;
 	
-	//free the rest if one lower gets failed
 	vars->path_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, PATH_IMG, &wth, &hgt);
 	if (!vars->path_img.img_ptr)
 		return (ft_destroy_mlx_images(vars, true));
@@ -215,36 +178,30 @@ void	ft_swap(char *a, char *b)
 }
 
 //make sure the exit doesnt change position if you nove over it
-bool	ft_check_move(t_vars *vars, int y, int x)
+bool	ft_check_move(t_vars *vars, char *c)
 {
-	char c;
-
-	c = vars->map[y][x];
-	// ft_printf("CHAR: %c\n", c);
-	// ft_printf("y: %d\n", y);
-	// ft_printf("x: %d\n", x);
-	if (c == '0')
+	if (*c == '0')
 		return (true);
-	else if (c == 'C')
+	else if (*c == 'C')
 	{
 		vars->taken_c++;
-		vars->map[y][x] = '0';
+		*c = '0';
 	}
-	else if (c == 'E')
+	else if (*c == 'E')
 	{
 		if (vars->taken_c == vars->amt_c)
 			ft_close_game(vars);
-		else if (vars->exit_pos_y == y && vars->exit_pos_x == x)
-			vars->map[y][x] = '0';
+		else
+			*c = '0';
 	}
 	else
 		return (false);
 	return (true);
 }
 
-bool	ft_change_player_pos(t_vars *vars, int y, int x)
+bool	ft_move_p(t_vars *vars, int y, int x)
 {
-	if (ft_check_move(vars, y, x) == false)
+	if (ft_check_move(vars, &vars->map[y][x]) == false)
 		return (false);
 	ft_printf("MOVE: %d\n", ++(vars->num_moves));
 	ft_swap(&vars->map[vars->p_pos_y][vars->p_pos_x], &vars->map[y][x]);
@@ -277,47 +234,26 @@ void	ft_change_pov_values_on_move(t_vars *vars, int y, int x)
 			vars->pov_bot = vars->pov_bot_max + (vars->pov_top_max - vars->pov_top);
 		}
 	}
-	// if (vars->p_pos_x < 32)
-	// 	vars->pov_left = vars->p_pos_x;
-	// else
-	// 	vars->pov_left = vars->pov_left_max;
-	// if (vars->p_pos_x + vars->pov_right > vars->map_wth)
-	// 	vars->pov_right = vars->map_wth - vars->p_pos_x;
-	// else
-	// 	vars->pov_right = vars->pov_right_max + (vars->pov_left_max - vars->pov_left);
 	ft_printf("%d %d %d %d\n", vars->pov_top, vars->pov_bot, vars->pov_left, vars->pov_right);
 }
 
-int	ft_key_press(int keycode, t_vars *vars)
+int	ft_key_press(int key, t_vars *vars)
 {
-	if (keycode == arrow_left)
-	{
-		if (ft_change_player_pos(vars, vars->p_pos_y, vars->p_pos_x - 1) == true)
-			ft_change_pov_values_on_move(vars, 0, -1);
-	}
-	else if (keycode == arrow_right)
-	{
-		if (ft_change_player_pos(vars, vars->p_pos_y, vars->p_pos_x + 1) == true)
-			ft_change_pov_values_on_move(vars, 0, 1);
-	}
-	else if (keycode == arrow_up)
-	{
-		if (ft_change_player_pos(vars, vars->p_pos_y - 1, vars->p_pos_x) == true)
-			ft_change_pov_values_on_move(vars, -1, 0);
-	}
-	else if (keycode == arrow_down)
-	{
-		if (ft_change_player_pos(vars, vars->p_pos_y + 1, vars->p_pos_x) == true)
-			ft_change_pov_values_on_move(vars, 1, 0);
-	}
-	else if (keycode == key_esc)
+	if (key == arrow_l && ft_move_p(vars, vars->p_pos_y, vars->p_pos_x - 1))
+		ft_change_pov_values_on_move(vars, 0, -1);
+	else if (key == arrow_r && ft_move_p(vars, vars->p_pos_y, vars->p_pos_x + 1))
+		ft_change_pov_values_on_move(vars, 0, 1);
+	else if (key == arrow_u && ft_move_p(vars, vars->p_pos_y - 1, vars->p_pos_x))
+		ft_change_pov_values_on_move(vars, -1, 0);
+	else if (key == arrow_d && ft_move_p(vars, vars->p_pos_y + 1, vars->p_pos_x))
+		ft_change_pov_values_on_move(vars, 1, 0);
+	else if (key == esc)
 		ft_close_game(vars);
 	else
 		return (1);
 	ft_render_pov(vars);
 	return (0);
 }
-
 
 void	ft_get_pov_values(t_vars *vars)
 {
