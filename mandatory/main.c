@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/17 23:46:18 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/18 00:46:05 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,64 +255,83 @@ int	ft_key_press(int key, t_vars *vars)
 	return (0);
 }
 
-void	ft_get_pov_values(t_vars *vars)
+void	ft_get_pov_range_y(t_vars *vars)
 {
-	//calculate max values
-	vars->pov_top_max = (SCREEN_HGT / IMG_WTH) / 2;
-	vars->pov_bot_max = vars->pov_top_max;
-	vars->pov_left_max = (SCREEN_WTH / IMG_WTH) / 2;
-	vars->pov_right_max = vars->pov_left_max;
-	ft_printf("%d %d %d %d\n", vars->pov_top_max, vars->pov_bot_max, vars->pov_left_max, vars->pov_right_max);
+	if (vars->p_pos_y < vars->pov_top_max)
+	{
+		vars->pov_top = vars->p_pos_y;
+		vars->pov_bot = vars->pov_bot_max + vars->pov_top_max - vars->pov_top;
+	}
+	else if (vars->map_hgt - vars->p_pos_y < vars->pov_bot_max)
+	{
+		vars->pov_bot = vars->map_hgt - vars->p_pos_y;
+		vars->pov_top = vars->pov_bot_max + vars->pov_top_max - vars->pov_bot;
+	}
+	else
+	{
+		vars->pov_top = vars->pov_top_max;
+		vars->pov_bot = vars->pov_bot_max;
+	}
+}
 
-	//pov range for y axis
-	// vars->pov_top =
-	// vars->pov_bot =
+void	ft_get_pov_range_x(t_vars *vars)
+{
+	if (vars->p_pos_x < vars->pov_left_max)
+	{
+		vars->pov_left = vars->p_pos_x;
+		vars->pov_right = vars->pov_right_max + vars->pov_left_max - vars->pov_left;
+	}
+	else if (vars->map_wth - vars->p_pos_x < vars->pov_right_max)
+	{
+		vars->pov_right = vars->map_wth - vars->p_pos_x;
+		vars->pov_left = vars->pov_right_max + vars->pov_left_max - vars->pov_right;
+	}
+	else
+	{
+		vars->pov_left = vars->pov_left_max;
+		vars->pov_right = vars->pov_right_max;
+	}
+}
+
+//calculate pov values and window size
+void	ft_get_pov_values(t_vars *vars, int *win_wth, int *win_hgt)
+{
+	if (vars->map_hgt * IMG_HGT < SCREEN_HGT - IMG_HGT)
+	{
+		*win_hgt = vars->map_hgt * IMG_HGT;
+		vars->pov_top_max = vars->map_hgt;
+	}
+	else
+		vars->pov_top_max = (*win_hgt / IMG_HGT) / 2;
+	if (vars->map_wth * IMG_WTH < SCREEN_WTH - IMG_WTH)
+	{
+		*win_wth = vars->map_wth * IMG_WTH;
+		vars->pov_left_max = vars->map_wth;
+	}
+	else
+		vars->pov_left_max = (*win_wth / IMG_WTH) / 2;
+	vars->pov_bot_max = vars->pov_top_max;
+	vars->pov_right_max = vars->pov_left_max;
 	if (vars->pov_top_max + vars->pov_bot_max < vars->map_hgt)
-	{
-		if (vars->p_pos_y < vars->pov_top_max)
-		{
-			vars->pov_top = vars->p_pos_y;
-			vars->pov_bot = vars->pov_bot_max + vars->pov_top_max - vars->pov_top;
-		}
-		else if (vars->map_hgt - vars->p_pos_y < vars->pov_bot_max)
-		{
-			vars->pov_bot = vars->map_hgt - vars->p_pos_y;
-			vars->pov_top = vars->pov_bot_max + vars->pov_top_max - vars->pov_bot;
-		}
-		else
-		{
-			vars->pov_top = vars->pov_top_max;
-			vars->pov_bot = vars->pov_bot_max;
-		}
-	}
-	//pov range for x axis
+		ft_get_pov_range_y(vars);
 	if (vars->pov_left_max + vars->pov_right_max < vars->map_wth)
-	{
-		if (vars->p_pos_x < vars->pov_left_max)
-		{
-			vars->pov_left = vars->p_pos_x;
-			vars->pov_right = vars->pov_right_max + vars->pov_left_max - vars->pov_left;
-		}
-		else if (vars->map_wth - vars->p_pos_x < vars->pov_right_max)
-		{
-			vars->pov_right = vars->map_wth - vars->p_pos_x;
-			vars->pov_left = vars->pov_right_max + vars->pov_left_max - vars->pov_right;
-		}
-		else
-		{
-			vars->pov_left = vars->pov_left_max;
-			vars->pov_right = vars->pov_right_max;
-		}
-	}
+		ft_get_pov_range_x(vars);
+	ft_printf("%d %d %d %d\n", vars->pov_top_max, vars->pov_bot_max, vars->pov_left_max, vars->pov_right_max);
 	ft_printf("top:%d bot:%d left:%d right:%d\n", vars->pov_top, vars->pov_bot, vars->pov_left, vars->pov_right);
 }
 
 bool	ft_game(t_vars *vars)
 {	
+	int	win_wth;
+	int	win_hgt;
+
+	win_hgt = SCREEN_HGT;
+	win_wth = SCREEN_WTH;
 	vars->mlx_ptr = mlx_init();
 	if (!vars->mlx_ptr)
 		return (ft_error("MLX init failed", 1));
-	vars->win_ptr = mlx_new_window(vars->mlx_ptr, SCREEN_WTH, SCREEN_HGT, "so_long");
+	ft_get_pov_values(vars, &win_wth, &win_hgt);
+	vars->win_ptr = mlx_new_window(vars->mlx_ptr, win_wth, win_hgt, "so_long");
 	if (!vars->mlx_ptr)
 	{
 		free(vars->mlx_ptr);
@@ -320,7 +339,6 @@ bool	ft_game(t_vars *vars)
 	}
 	if (ft_create_mlx_images(vars) == false)
 		return (false);
-	ft_get_pov_values(vars);
 	mlx_hook(vars->win_ptr, win_closed, 0L, ft_close_window_x, vars);
 	mlx_hook(vars->win_ptr, on_keydown, 1L<<0, ft_key_press, vars);
 	ft_render_pov(vars);
