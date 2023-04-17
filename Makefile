@@ -6,7 +6,7 @@
 #    By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/08 21:07:24 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/17 04:15:06 by cmenke           ###   ########.fr        #
+#    Updated: 2023/04/17 23:21:07 by cmenke           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,11 @@ NAME := so_long
 SRCDIR := mandatory
 
 SRCS := $(addprefix ${SRCDIR}/,main.c \
-							list_functions.c)
+							list_functions.c \
+							check_map_format.c \
+							check_map_path.c \
+							close_free_error.c \
+							read_map.c)
 
 
 OBJS := ${SRCS:.c=.o}
