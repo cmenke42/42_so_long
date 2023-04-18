@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:44:13 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/16 21:47:39 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/18 23:49:33 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 t_lst	*ft_new_node(int y, int x)
 {
-	t_lst *node;
+	t_lst	*node;
 
 	node = malloc(sizeof(t_lst));
 	if (!node)
@@ -29,7 +29,7 @@ t_lst	*ft_last_node(t_lst *lst)
 {
 	if (!lst)
 		return (NULL);
-	while(lst->next)
+	while (lst->next)
 		lst = lst->next;
 	return (lst);
 }
@@ -47,8 +47,8 @@ void	ft_node_add_back(t_lst **lst, t_lst *node)
 
 void	ft_clear_lst(t_lst **lst)
 {
-	t_lst *node;
-	
+	t_lst	*node;
+
 	if (lst)
 	{
 		while (*lst)
