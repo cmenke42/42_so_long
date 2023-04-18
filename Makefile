@@ -6,7 +6,7 @@
 #    By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/08 21:07:24 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/17 23:21:07 by cmenke           ###   ########.fr        #
+#    Updated: 2023/04/19 00:29:47 by cmenke           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,8 +20,12 @@ SRCS := $(addprefix ${SRCDIR}/,main.c \
 							list_functions.c \
 							check_map_format.c \
 							check_map_path.c \
-							close_free_error.c \
-							read_map.c)
+							close_free.c \
+							read_map.c \
+							calculate_pov.c \
+							events_and_key_press.c \
+							put_map_on_screen.c \
+							messages.c)
 
 
 OBJS := ${SRCS:.c=.o}
@@ -39,7 +43,7 @@ MLXLIB := libmlx.a
 # INCLUDE := -L${LIBFTDIR} -l:${LIBFT}
 INCLUDE := ${LIBFTDIR}/${LIBFT} ${MLXDIR}/${MLXLIB} -framework OpenGL -framework AppKit
 
-# CFLAGS := -Wall -Werror -Wextra
+CFLAGS := -Wall -Werror -Wextra -g
 
 CC := cc
 

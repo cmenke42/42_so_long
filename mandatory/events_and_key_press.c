@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:17:56 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/18 23:48:56 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 00:01:31 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ static bool	ft_check_move(t_vars *vars, char *c)
 	else if (*c == 'E')
 	{
 		if (vars->taken_c == vars->amt_c)
+		{
+			ft_printf("MOVE: %d\n", ++(vars->num_moves));
 			ft_close_game(vars);
+		}
 		else
 			*c = '0';
 	}

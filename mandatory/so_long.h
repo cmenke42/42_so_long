@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/18 23:58:48 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 00:02:34 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 #define SCREEN_WTH 900
 #define SCREEN_HGT 600
 # define IMG_WTH 30
-# define IMG_HGT 30
+# define IMG_HGT 50
 
 typedef struct s_lst
 {

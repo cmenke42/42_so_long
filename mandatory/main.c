@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/18 23:50:38 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 00:45:53 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,10 @@ bool	ft_game(t_vars *vars)
 	if (!vars->mlx_ptr)
 		return (ft_error("MLX init failed", 1));
 	ft_get_pov_values(vars, &win_wth, &win_hgt);
-	vars->win_ptr = mlx_new_window(vars->mlx_ptr, win_wth, win_hgt, "so_long");
-	if (!vars->mlx_ptr)
+	// vars->win_ptr = mlx_new_window(vars->mlx_ptr, win_wth, win_hgt, "so_long");
+	if (!vars->win_ptr)
 	{
-		free(vars->mlx_ptr);
-		return (ft_error("MLX init failed", 1));
+		return (ft_error("MLX new window failed", 1));
 	}
 	if (ft_create_mlx_images(vars, IMG_WTH, IMG_HGT) == false)
 		return (false);
@@ -78,10 +77,10 @@ int	main(int argc, char **argv)
 
 	exit_code = 0;
 	if (argc != 2)
-		return (ft_error_exit("Wrong input file", 1));
+		exit(ft_error_exit("Wrong input file", 1));
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
-		return (ft_error_exit("Malloc error", 1));
+		exit(ft_error_exit("Malloc error", 1));
 	ft_bzero(vars, sizeof(t_vars));
 	if (ft_check_map(argv[1], vars) == false)
 		exit_code = 1;
@@ -91,5 +90,5 @@ int	main(int argc, char **argv)
 		ft_printf("\n\n##all good##\n\n");
 	ft_free_map(vars, 0);
 	free (vars);
-	return (exit_code);
+	exit(exit_code);
 }
