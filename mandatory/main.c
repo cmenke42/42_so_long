@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/18 00:46:05 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/18 19:14:02 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,18 +110,18 @@ int	ft_render_pov(t_vars *vars)
 	if (!vars->win_ptr)
 		return (1);
 	j = 0;
-	if (vars->pov_top != 0 && vars->p_pos_y - vars->pov_top >= 0)
-		y = vars->p_pos_y - vars->pov_top;
+	if (vars->pov_u != 0 && vars->p_pos_y - vars->pov_u >= 0)
+		y = vars->p_pos_y - vars->pov_u;
 	else
 		y = 0;
-	while(y >= 0 && y < vars->map_hgt && j < vars->pov_top_max + vars->pov_bot_max)
+	while(y >= 0 && y < vars->map_hgt && j < vars->pov_u_max + vars->pov_d_max)
 	{
-		if (vars->pov_left != 0 && vars->p_pos_x - vars->pov_left >= 0)
-			x = vars->p_pos_x - vars->pov_left;
+		if (vars->pov_l != 0 && vars->p_pos_x - vars->pov_l >= 0)
+			x = vars->p_pos_x - vars->pov_l;
 		else
 			x = 0;
 		i = 0;
-		while (x >= 0 && x < vars->map_wth && i < vars->pov_left_max + vars->pov_right_max)
+		while (x >= 0 && x < vars->map_wth && i < vars->pov_l_max + vars->pov_r_max)
 		{
 			if (vars->map[y][x] == '0')
 				mlx_put_image_to_window(vars->mlx_ptr, vars->win_ptr, vars->path_img.img_ptr, i * IMG_WTH, j * IMG_HGT);
@@ -142,27 +142,26 @@ int	ft_render_pov(t_vars *vars)
 	return (0);
 }
 
-bool	ft_create_mlx_images(t_vars *vars)
+bool	ft_create_mlx_images(t_vars *vars, int wth, int hgt)
 {
-	int	wth;
-	int	hgt;
-
-	wth = IMG_WTH;
-	hgt = IMG_HGT;
-	
-	vars->path_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, PATH_IMG, &wth, &hgt);
+	vars->path_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
+			PATH_IMG, &wth, &hgt);
 	if (!vars->path_img.img_ptr)
 		return (ft_destroy_mlx_images(vars, true));
-	vars->wall_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, WALL_IMG, &wth, &hgt);
+	vars->wall_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
+			WALL_IMG, &wth, &hgt);
 	if (!vars->wall_img.img_ptr)
 		return (ft_destroy_mlx_images(vars, true));
-	vars->player_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, PLAYER_IMG, &wth, &hgt);
+	vars->player_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
+			PLAYER_IMG, &wth, &hgt);
 	if (!vars->player_img.img_ptr)
 		return (ft_destroy_mlx_images(vars, true));
-	vars->collect_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, COLLECT_IMG, &wth, &hgt);
+	vars->collect_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
+			COLLECT_IMG, &wth, &hgt);
 	if (!vars->collect_img.img_ptr)
 		return (ft_destroy_mlx_images(vars, true));
-	vars->exit_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr, EXIT_IMG, &wth, &hgt);
+	vars->exit_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
+			EXIT_IMG, &wth, &hgt);
 	if (!vars->exit_img.img_ptr)
 		return (ft_destroy_mlx_images(vars, true));
 	return (true);
@@ -216,37 +215,41 @@ bool	ft_move_p(t_vars *vars, int y, int x)
 //starts moving the map instant till you can see the end of the map
 void	ft_change_pov_values_on_move(t_vars *vars, int y, int x)
 {
-	//vars->pov_right < vars->pov_right_max || vars->pov_left < vars->pov_left_max || -> add this to only move screen when crossing center and stay near center
-	if ((vars->pov_left_max + vars->pov_right_max < vars->map_wth) && x != 0 && (vars->pov_right < vars->pov_right_max || vars->pov_left < vars->pov_left_max ||vars->p_pos_x - vars->pov_left < 0 || vars->p_pos_x + vars->pov_right > vars->map_wth))
+	//vars->pov_r < vars->pov_r_max || vars->pov_l < vars->pov_l_max || -> add this to only move screen when crossing center and stay near center
+	if (x != 0 && vars->pov_l_max + vars->pov_r_max < vars->map_wth)
 	{
-		if (vars->pov_left + x >= 0)
+		if ((vars->pov_r < vars->pov_r_max || vars->pov_l < vars->pov_l_max
+			|| vars->p_pos_x + vars->pov_r > vars->map_wth
+			|| vars->p_pos_x - vars->pov_l < 0) && vars->pov_l + x >= 0)
 		{
-			vars->pov_left += x;
-			vars->pov_right = vars->pov_right_max + (vars->pov_left_max - vars->pov_left);
+			vars->pov_l += x;
+			vars->pov_r = vars->pov_r_max + (vars->pov_l_max - vars->pov_l);
 		}
 	}
-	//vars->pov_top < vars->pov_top_max || vars->pov_bot < vars->pov_bot_max || -> add this to only move screen when crossing center and stay near center
-	if ((vars->pov_top_max + vars->pov_bot_max < vars->map_hgt) && y != 0 && (vars->pov_top < vars->pov_top_max || vars->pov_bot < vars->pov_bot_max ||vars->p_pos_y - vars->pov_top < 0 || vars->p_pos_y + vars->pov_bot > vars->map_hgt))
+	//vars->pov_u < vars->pov_u_max || vars->pov_d < vars->pov_d_max || -> add this to only move screen when crossing center and stay near center
+	if (y != 0 && vars->pov_u_max + vars->pov_d_max < vars->map_hgt)
 	{
-		if (vars->pov_top + y >= 0)
+		if ((vars->pov_u < vars->pov_u_max || vars->pov_d < vars->pov_d_max
+			|| vars->p_pos_y + vars->pov_d > vars->map_hgt
+			|| vars->p_pos_y - vars->pov_u < 0) && vars->pov_u + y >= 0)
 		{
-			vars->pov_top += y;
-			vars->pov_bot = vars->pov_bot_max + (vars->pov_top_max - vars->pov_top);
+			vars->pov_u += y;
+			vars->pov_d = vars->pov_d_max + (vars->pov_u_max - vars->pov_u);
 		}
 	}
-	ft_printf("%d %d %d %d\n", vars->pov_top, vars->pov_bot, vars->pov_left, vars->pov_right);
+	ft_printf("%d %d %d %d\n", vars->pov_u, vars->pov_d, vars->pov_l, vars->pov_r);
 }
 
 int	ft_key_press(int key, t_vars *vars)
 {
-	if (key == arrow_l && ft_move_p(vars, vars->p_pos_y, vars->p_pos_x - 1))
-		ft_change_pov_values_on_move(vars, 0, -1);
-	else if (key == arrow_r && ft_move_p(vars, vars->p_pos_y, vars->p_pos_x + 1))
-		ft_change_pov_values_on_move(vars, 0, 1);
-	else if (key == arrow_u && ft_move_p(vars, vars->p_pos_y - 1, vars->p_pos_x))
+	if (key == arrow_u && ft_move_p(vars, vars->p_pos_y - 1, vars->p_pos_x))
 		ft_change_pov_values_on_move(vars, -1, 0);
 	else if (key == arrow_d && ft_move_p(vars, vars->p_pos_y + 1, vars->p_pos_x))
 		ft_change_pov_values_on_move(vars, 1, 0);
+	else if (key == arrow_l && ft_move_p(vars, vars->p_pos_y, vars->p_pos_x - 1))
+		ft_change_pov_values_on_move(vars, 0, -1);
+	else if (key == arrow_r && ft_move_p(vars, vars->p_pos_y, vars->p_pos_x + 1))
+		ft_change_pov_values_on_move(vars, 0, 1);
 	else if (key == esc)
 		ft_close_game(vars);
 	else
@@ -257,39 +260,39 @@ int	ft_key_press(int key, t_vars *vars)
 
 void	ft_get_pov_range_y(t_vars *vars)
 {
-	if (vars->p_pos_y < vars->pov_top_max)
+	if (vars->p_pos_y < vars->pov_u_max)
 	{
-		vars->pov_top = vars->p_pos_y;
-		vars->pov_bot = vars->pov_bot_max + vars->pov_top_max - vars->pov_top;
+		vars->pov_u = vars->p_pos_y;
+		vars->pov_d = vars->pov_d_max + vars->pov_u_max - vars->pov_u;
 	}
-	else if (vars->map_hgt - vars->p_pos_y < vars->pov_bot_max)
+	else if (vars->map_hgt - vars->p_pos_y < vars->pov_d_max)
 	{
-		vars->pov_bot = vars->map_hgt - vars->p_pos_y;
-		vars->pov_top = vars->pov_bot_max + vars->pov_top_max - vars->pov_bot;
+		vars->pov_d = vars->map_hgt - vars->p_pos_y;
+		vars->pov_u = vars->pov_d_max + vars->pov_u_max - vars->pov_d;
 	}
 	else
 	{
-		vars->pov_top = vars->pov_top_max;
-		vars->pov_bot = vars->pov_bot_max;
+		vars->pov_u = vars->pov_u_max;
+		vars->pov_d = vars->pov_d_max;
 	}
 }
 
 void	ft_get_pov_range_x(t_vars *vars)
 {
-	if (vars->p_pos_x < vars->pov_left_max)
+	if (vars->p_pos_x < vars->pov_l_max)
 	{
-		vars->pov_left = vars->p_pos_x;
-		vars->pov_right = vars->pov_right_max + vars->pov_left_max - vars->pov_left;
+		vars->pov_l = vars->p_pos_x;
+		vars->pov_r = vars->pov_r_max + vars->pov_l_max - vars->pov_l;
 	}
-	else if (vars->map_wth - vars->p_pos_x < vars->pov_right_max)
+	else if (vars->map_wth - vars->p_pos_x < vars->pov_r_max)
 	{
-		vars->pov_right = vars->map_wth - vars->p_pos_x;
-		vars->pov_left = vars->pov_right_max + vars->pov_left_max - vars->pov_right;
+		vars->pov_r = vars->map_wth - vars->p_pos_x;
+		vars->pov_l = vars->pov_r_max + vars->pov_l_max - vars->pov_r;
 	}
 	else
 	{
-		vars->pov_left = vars->pov_left_max;
-		vars->pov_right = vars->pov_right_max;
+		vars->pov_l = vars->pov_l_max;
+		vars->pov_r = vars->pov_r_max;
 	}
 }
 
@@ -299,25 +302,25 @@ void	ft_get_pov_values(t_vars *vars, int *win_wth, int *win_hgt)
 	if (vars->map_hgt * IMG_HGT < SCREEN_HGT - IMG_HGT)
 	{
 		*win_hgt = vars->map_hgt * IMG_HGT;
-		vars->pov_top_max = vars->map_hgt;
+		vars->pov_u_max = vars->map_hgt;
 	}
 	else
-		vars->pov_top_max = (*win_hgt / IMG_HGT) / 2;
+		vars->pov_u_max = (*win_hgt / IMG_HGT) / 2;
 	if (vars->map_wth * IMG_WTH < SCREEN_WTH - IMG_WTH)
 	{
 		*win_wth = vars->map_wth * IMG_WTH;
-		vars->pov_left_max = vars->map_wth;
+		vars->pov_l_max = vars->map_wth;
 	}
 	else
-		vars->pov_left_max = (*win_wth / IMG_WTH) / 2;
-	vars->pov_bot_max = vars->pov_top_max;
-	vars->pov_right_max = vars->pov_left_max;
-	if (vars->pov_top_max + vars->pov_bot_max < vars->map_hgt)
+		vars->pov_l_max = (*win_wth / IMG_WTH) / 2;
+	vars->pov_d_max = vars->pov_u_max;
+	vars->pov_r_max = vars->pov_l_max;
+	if (vars->pov_u_max + vars->pov_d_max < vars->map_hgt)
 		ft_get_pov_range_y(vars);
-	if (vars->pov_left_max + vars->pov_right_max < vars->map_wth)
+	if (vars->pov_l_max + vars->pov_r_max < vars->map_wth)
 		ft_get_pov_range_x(vars);
-	ft_printf("%d %d %d %d\n", vars->pov_top_max, vars->pov_bot_max, vars->pov_left_max, vars->pov_right_max);
-	ft_printf("top:%d bot:%d left:%d right:%d\n", vars->pov_top, vars->pov_bot, vars->pov_left, vars->pov_right);
+	ft_printf("%d %d %d %d\n", vars->pov_u_max, vars->pov_d_max, vars->pov_l_max, vars->pov_r_max);
+	ft_printf("top:%d bot:%d left:%d right:%d\n", vars->pov_u, vars->pov_d, vars->pov_l, vars->pov_r);
 }
 
 bool	ft_game(t_vars *vars)
@@ -337,7 +340,7 @@ bool	ft_game(t_vars *vars)
 		free(vars->mlx_ptr);
 		return (ft_error("MLX init failed", 1));
 	}
-	if (ft_create_mlx_images(vars) == false)
+	if (ft_create_mlx_images(vars, IMG_WTH, IMG_HGT) == false)
 		return (false);
 	mlx_hook(vars->win_ptr, win_closed, 0L, ft_close_window_x, vars);
 	mlx_hook(vars->win_ptr, on_keydown, 1L<<0, ft_key_press, vars);
