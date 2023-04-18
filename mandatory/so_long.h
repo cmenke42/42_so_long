@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 00:02:34 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 00:55:00 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,10 @@
 # define EXIT_IMG "textures/exit.xpm"
 # define PLAYER_IMG "textures/player.xpm"
 # define COLLECT_IMG "textures/collectable.xpm"
-// # define SCREEN_WTH 1920
-// # define SCREEN_HGT 1080
-#define SCREEN_WTH 900
-#define SCREEN_HGT 600
+# define SCREEN_WTH 1920
+# define SCREEN_HGT 1080
 # define IMG_WTH 30
-# define IMG_HGT 50
+# define IMG_HGT 30
 
 typedef struct s_lst
 {

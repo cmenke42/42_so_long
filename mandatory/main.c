@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 00:52:44 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 00:54:43 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,6 @@ int	main(int argc, char **argv)
 		exit_code = 1;
 	if (exit_code == 0 && ft_game(vars) == false)
 		exit_code = 1;
-	if (exit_code == 0)
-		ft_printf("\n\n##all good##\n\n");
 	ft_free_map(vars, 0);
 	free (vars);
 	exit(exit_code);
