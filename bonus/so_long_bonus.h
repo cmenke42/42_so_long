@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   so_long.h                                          :+:      :+:    :+:   */
+/*   so_long_bonus.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 01:16:03 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 02:24:54 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # define PLAYER_IMG "textures/player.xpm"
 # define COLLECT_IMG "textures/collectable.xpm"
 # define MONSTER_IMG "textures/monster.xpm"
+# define MONSTER_TWO_IMG "textures/monster2.xpm"
+# define MONSTER_THREE_IMG "textures/monster3.xpm"
 # define SCREEN_WTH 1920
 # define SCREEN_HGT 1080
 # define IMG_WTH 30
@@ -88,6 +90,8 @@ typedef struct s_vars
 	t_img	collect_img;
 	t_img	exit_img;
 	t_img	monster_img;
+	t_img	monster_two_img;
+	t_img	monster_three_img;
 	int		pov_u;
 	int		pov_d;
 	int		pov_l;
@@ -128,5 +132,8 @@ int		ft_render_pov(t_vars *vars);
 // messages.c
 bool	ft_error_exit(char	*error_text, int exit_code);
 bool	ft_error(char	*error_text, int exit_code);
+//monster_sprite.c
+bool	ft_create_mlx_images_monster(t_vars *vars, int wth, int hgt);
+int		ft_monster_sprite(t_vars *vars);
 
 #endif

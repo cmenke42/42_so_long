@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   put_map_on_screen.c                                :+:      :+:    :+:   */
+/*   put_map_on_screen_bonus.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:22:22 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 01:26:05 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 02:40:39 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,8 @@ bool	ft_create_mlx_images(t_vars *vars, int wth, int hgt)
 			EXIT_IMG, &wth, &hgt);
 	if (!vars->exit_img.img_ptr)
 		return (ft_destroy_mlx_images(vars, true));
-	vars->monster_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
-			MONSTER_IMG, &wth, &hgt);
-	if (!vars->monster_img.img_ptr)
-		return (ft_destroy_mlx_images(vars, true));
+	if (ft_create_mlx_images_monster(vars, wth, hgt) == false)
+		return (false);
 	return (true);
 }
 
@@ -60,8 +58,6 @@ static void	ft_put_images_on_map(t_vars *vars, char c, int i, int j)
 		mlx_put_image_to_window(mlx, win, vars->wall_img.img_ptr, x, y);
 	else if (c == 'C')
 		mlx_put_image_to_window(mlx, win, vars->collect_img.img_ptr, x, y);
-	else if (c == 'M')
-		mlx_put_image_to_window(mlx, win, vars->monster_img.img_ptr, x, y);
 	else if (c == 'E')
 		mlx_put_image_to_window(mlx, win, vars->exit_img.img_ptr, x, y);
 	else if (c == 'P')

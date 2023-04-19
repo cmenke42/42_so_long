@@ -6,7 +6,7 @@
 #    By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/08 21:07:24 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/19 02:06:19 by cmenke           ###   ########.fr        #
+#    Updated: 2023/04/19 02:32:24 by cmenke           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,8 @@ BSRCS := $(addprefix ${BSCRDIR}/,main_bonus.c \
 							calculate_pov_bonus.c \
 							events_and_key_press_bonus.c \
 							put_map_on_screen_bonus.c \
-							messages_bonus.c)
+							messages_bonus.c \
+							monster_sprite_bonus.c)
 
 
 OBJS := ${SRCS:.c=.o}
@@ -89,9 +90,7 @@ fclean: clean
 	make fclean -C ${LIBFTDIR}
 	make clean -C ${MLXDIR}
 
-bonus: library ${BSCRDIR}/${NAME}
-
-${BSCRDIR}/${NAME}: ${BOBJS} ${LIBFTDIR}/${LIBFT} ${MLXDIR}/${MLXLIB}
+bonus: library ${BOBJS} ${LIBFTDIR}/${LIBFT} ${MLXDIR}/${MLXLIB}
 	${CC} ${CFLAGS} ${BOBJS} ${INCLUDE} -o ${NAME}
 
 ${BOBJS}: ${BHEADER}
