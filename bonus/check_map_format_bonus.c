@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 22:58:13 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 01:26:17 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 03:11:03 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,10 @@
 //modified for bonus -> added 'M' for monster
 static bool	ft_valid_char(char c, t_vars *vars, int y, int x)
 {
-	if (c == '0' || c == '1' || c == 'M')
+	if (c == '0' || c == '1')
 		return (true);
+	if (c == 'M')
+		vars->amt_m = 1;
 	else if (c == 'C')
 		vars->amt_c++;
 	else if (c == 'E' )

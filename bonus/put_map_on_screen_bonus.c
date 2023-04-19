@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:22:22 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 02:40:39 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 02:59:13 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,11 @@ bool	ft_create_mlx_images(t_vars *vars, int wth, int hgt)
 	return (true);
 }
 
-//added a line for monster
-static void	ft_put_images_on_map(t_vars *vars, char c, int i, int j)
+static void	ft_put_imgage(t_vars *vars, char c, int y, int x)
 {
-	int		x;
-	int		y;
 	void	*mlx;
 	void	*win;
 
-	y = i * IMG_HGT;
-	x = j * IMG_WTH;
 	mlx = vars->mlx_ptr;
 	win = vars->win_ptr;
 	if (c == '0')
@@ -85,7 +80,7 @@ int	ft_render_pov(t_vars *vars)
 		j = 0;
 		while (x >= 0 && x < vars->map_wth
 			&& j < vars->pov_l_max + vars->pov_r_max)
-			ft_put_images_on_map(vars, vars->map[y][x++], i, j++);
+			ft_put_imgage(vars, vars->map[y][x++], i * IMG_HGT, j++ * IMG_WTH);
 		i++;
 		y++;
 	}

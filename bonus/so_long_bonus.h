@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 02:24:54 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 03:11:11 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ typedef struct s_vars
 	int		amt_p;
 	int		amt_e;
 	int		amt_c;
+	int		amt_m;
 	int		amt_p_e_c;
 	int		taken_c;
 	void	*mlx_ptr;

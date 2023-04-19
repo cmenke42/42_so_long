@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 02:31:18 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 03:13:20 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,8 @@
 // 	return (t << 24 | r << 16 | g << 8 | b);
 // }
 
-bool	ft_game(t_vars *vars)
+bool	ft_game(t_vars *vars, int win_wth, int win_hgt)
 {	
-	int	win_wth;
-	int	win_hgt;
-
-	win_hgt = SCREEN_HGT;
-	win_wth = SCREEN_WTH;
 	vars->mlx_ptr = mlx_init();
 	if (!vars->mlx_ptr)
 		return (ft_error("MLX init failed", 1));
@@ -47,7 +42,8 @@ bool	ft_game(t_vars *vars)
 	if (vars->win_ptr)
 	{
 		ft_render_pov(vars);
-		mlx_loop_hook(vars->mlx_ptr, ft_monster_sprite, vars);
+		if (vars->amt_m == 1)
+			mlx_loop_hook(vars->mlx_ptr, ft_monster_sprite, vars);
 	}
 	mlx_loop(vars->mlx_ptr);
 	return (true);
@@ -88,7 +84,7 @@ int	main(int argc, char **argv)
 	ft_bzero(vars, sizeof(t_vars));
 	if (ft_check_map(argv[1], vars) == false)
 		exit_code = 1;
-	if (exit_code == 0 && ft_game(vars) == false)
+	if (exit_code == 0 && ft_game(vars, SCREEN_WTH, SCREEN_HGT) == false)
 		exit_code = 1;
 	ft_free_map(vars, 0);
 	free (vars);

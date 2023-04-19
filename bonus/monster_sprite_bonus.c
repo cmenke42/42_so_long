@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 02:22:44 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 02:38:47 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/19 03:08:11 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,39 +29,31 @@ bool	ft_create_mlx_images_monster(t_vars *vars, int wth, int hgt)
 	return (true);
 }
 
-static void	ft_sprite_animation(t_vars *vars, char c, int i, int j)
+static void	ft_sprite(t_vars *vars, char c, int y, int x)
 {
-	int			x;
-	int			y;
 	void		*mlx;
 	void		*win;
 	static int	count;
 
-	y = i * IMG_HGT;
-	x = j * IMG_WTH;
 	mlx = vars->mlx_ptr;
 	win = vars->win_ptr;
-
 	if (c == 'M')
 	{
-		if (count <= 15)
-		{
+		if (count <= 150000)
 			mlx_put_image_to_window(mlx, win, vars->monster_img.img_ptr, x, y);
-			count++;
-		}
-		else if (count <= 30)
+		else if (count <= 300000)
 		{
 			mlx_put_image_to_window(mlx, win,
 					vars->monster_two_img.img_ptr, x, y);
-			count++;
 		}
 		else
 		{
 			mlx_put_image_to_window(mlx, win,
 					vars->monster_three_img.img_ptr, x, y);
-			count = 0;
 		}
 	}
+	if (count++ == 450000)
+		count = 0;
 }
 
 int	ft_monster_sprite(t_vars *vars)
@@ -86,7 +78,7 @@ int	ft_monster_sprite(t_vars *vars)
 		while (x >= 0 && x < vars->map_wth
 			&& j < vars->pov_l_max + vars->pov_r_max)
 		{
-			ft_sprite_animation(vars, vars->map[y][x++], i, j++);
+			ft_sprite(vars, vars->map[y][x++], i * IMG_HGT, j++ * IMG_WTH);
 		}
 		i++;
 		y++;
