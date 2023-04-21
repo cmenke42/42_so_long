@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:17:56 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 01:30:40 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/20 20:51:50 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ static bool	ft_check_move(t_vars *vars, char *c)
 	}
 	else if (*c == 'M')
 	{
-		ft_printf("MOVE: %d\n", ++(vars->num_moves));
+		ft_put_movement_counter(vars, ++(vars->num_moves));
 		ft_close_game(vars);
 	}
 	else if (*c == 'E')
 	{
 		if (vars->taken_c == vars->amt_c)
 		{
-			ft_printf("MOVE: %d\n", ++(vars->num_moves));
+			ft_put_movement_counter(vars, ++(vars->num_moves));
 			ft_close_game(vars);
 		}
 		else
@@ -55,7 +55,7 @@ static bool	ft_mv_p(t_vars *vars, int y, int x)
 {
 	if (ft_check_move(vars, &vars->map[y][x]) == false)
 		return (false);
-	ft_printf("MOVE: %d\n", ++(vars->num_moves));
+	vars->num_moves++;
 	ft_swap(&vars->map[vars->p_pos_y][vars->p_pos_x], &vars->map[y][x]);
 	if (vars->exit_pos_y == vars->p_pos_y && vars->exit_pos_x == vars->p_pos_x)
 		vars->map[vars->exit_pos_y][vars->exit_pos_x] = 'E';

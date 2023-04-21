@@ -6,22 +6,11 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 03:13:20 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/20 20:28:44 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long_bonus.h"
-
-/// @brief -> creates an TRGB int value, each value goes from  0 to 255.
-// 				each parameter is one byte (8 bits) big
-/// @param t transparency 
-/// @param r red 
-/// @param g green
-/// @param b blue
-// int	ft_create_color(int t, int r, int g, int b)
-// {
-// 	return (t << 24 | r << 16 | g << 8 | b);
-// }
 
 bool	ft_game(t_vars *vars, int win_wth, int win_hgt)
 {	

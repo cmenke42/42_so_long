@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 03:11:11 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/20 20:51:09 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ int		ft_key_press(int key, t_vars *vars);
 // put_map_on_screen.c
 bool	ft_create_mlx_images(t_vars *vars, int wth, int hgt);
 int		ft_render_pov(t_vars *vars);
+void	ft_put_movement_counter(t_vars *vars, int num_moves);
 // messages.c
 bool	ft_error_exit(char	*error_text, int exit_code);
 bool	ft_error(char	*error_text, int exit_code);

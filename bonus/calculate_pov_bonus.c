@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   calculate_pov.c                                    :+:      :+:    :+:   */
+/*   calculate_pov_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:11:26 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 01:26:33 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/20 20:38:26 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,16 @@ void	ft_get_pov_values(t_vars *vars, int *win_wth, int *win_hgt)
 	if (vars->map_hgt * IMG_HGT < SCREEN_HGT - IMG_HGT)
 	{
 		*win_hgt = vars->map_hgt * IMG_HGT;
+		if (*win_hgt < 60)
+			*win_hgt = 60;
 		vars->pov_u_max = vars->map_hgt;
 	}
 	else
 		vars->pov_u_max = (*win_hgt / IMG_HGT) / 2;
 	if (vars->map_wth * IMG_WTH < SCREEN_WTH - IMG_WTH)
 	{
+		if (*win_wth < 120)
+			*win_wth = 120;
 		*win_wth = vars->map_wth * IMG_WTH;
 		vars->pov_l_max = vars->map_wth;
 	}

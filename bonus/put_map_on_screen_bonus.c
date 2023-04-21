@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:22:22 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 02:59:13 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/20 20:52:26 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,21 @@ bool	ft_create_mlx_images(t_vars *vars, int wth, int hgt)
 	return (true);
 }
 
+void	ft_put_movement_counter(t_vars *vars, int num_moves)
+{
+	char	*string;
+
+	string = ft_itoa(num_moves);
+	if (!string)
+	{
+		vars->exit_code = ft_error_exit("Malloc error", 1);
+		ft_close_game(vars);
+	}
+	mlx_string_put(vars->mlx_ptr, vars->win_ptr, 0, 15, 16777215, "Move:");
+	mlx_string_put(vars->mlx_ptr, vars->win_ptr, 0, 30, 16777215, string);
+	free(string);
+}
+
 static void	ft_put_imgage(t_vars *vars, char c, int y, int x)
 {
 	void	*mlx;
@@ -57,6 +72,8 @@ static void	ft_put_imgage(t_vars *vars, char c, int y, int x)
 		mlx_put_image_to_window(mlx, win, vars->exit_img.img_ptr, x, y);
 	else if (c == 'P')
 		mlx_put_image_to_window(mlx, win, vars->player_img.img_ptr, x, y);
+	ft_put_movement_counter(vars, vars->num_moves);
+
 }
 
 int	ft_render_pov(t_vars *vars)
