@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/20 20:28:44 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/24 22:08:48 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ bool	ft_game(t_vars *vars, int win_wth, int win_hgt)
 	{
 		ft_render_pov(vars);
 		if (vars->amt_m == 1)
-			mlx_loop_hook(vars->mlx_ptr, ft_monster_sprite, vars);
+			mlx_loop_hook(vars->mlx_ptr, ft_sprite, vars);
 	}
 	mlx_loop(vars->mlx_ptr);
 	return (true);

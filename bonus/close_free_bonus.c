@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 23:17:10 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 03:17:11 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/24 22:35:07 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,10 @@ bool	ft_destroy_mlx_images(t_vars *vars, bool print_error)
 		mlx_destroy_image(vars->mlx_ptr, vars->exit_img.img_ptr);
 	if (vars->monster_img.img_ptr)
 		mlx_destroy_image(vars->mlx_ptr, vars->monster_img.img_ptr);
-	if (vars->monster_two_img.img_ptr)
-		mlx_destroy_image(vars->mlx_ptr, vars->monster_two_img.img_ptr);
-	if (vars->monster_three_img.img_ptr)
-		mlx_destroy_image(vars->mlx_ptr, vars->monster_three_img.img_ptr);
+	if (vars->exit_two_img.img_ptr)
+		mlx_destroy_image(vars->mlx_ptr, vars->exit_two_img.img_ptr);
+	if (vars->exit_three_img.img_ptr)
+		mlx_destroy_image(vars->mlx_ptr, vars->exit_three_img.img_ptr);
 	return (false);
 }
 

@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:50 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/20 20:51:09 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/24 22:42:51 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@
 # include "../mlx/mlx.h"
 # define WALL_IMG "textures/wall2.xpm"
 # define PATH_IMG "textures/path.xpm"
-# define EXIT_IMG "textures/exit.xpm"
 # define PLAYER_IMG "textures/player.xpm"
+# define EXIT_IMG "textures/exit.xpm"
+# define EXIT_TWO_IMG "textures/exit2.xpm"
+# define EXIT_THREE_IMG "textures/exit3.xpm"
 # define COLLECT_IMG "textures/collectable.xpm"
 # define MONSTER_IMG "textures/monster.xpm"
-# define MONSTER_TWO_IMG "textures/monster2.xpm"
-# define MONSTER_THREE_IMG "textures/monster3.xpm"
 # define SCREEN_WTH 1920
 # define SCREEN_HGT 1080
 # define IMG_WTH 30
@@ -90,9 +90,10 @@ typedef struct s_vars
 	t_img	player_img;
 	t_img	collect_img;
 	t_img	exit_img;
+	t_img	exit_two_img;
+	t_img	exit_three_img;
+	bool	exit_vis;
 	t_img	monster_img;
-	t_img	monster_two_img;
-	t_img	monster_three_img;
 	int		pov_u;
 	int		pov_d;
 	int		pov_l;
@@ -136,6 +137,6 @@ bool	ft_error_exit(char	*error_text, int exit_code);
 bool	ft_error(char	*error_text, int exit_code);
 //monster_sprite.c
 bool	ft_create_mlx_images_monster(t_vars *vars, int wth, int hgt);
-int		ft_monster_sprite(t_vars *vars);
+int		ft_sprite(t_vars *vars);
 
 #endif
