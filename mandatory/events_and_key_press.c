@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:17:56 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 00:01:31 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/27 14:30:51 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ int	ft_key_press(int key, t_vars *vars)
 		ft_close_game(vars);
 	else
 		return (1);
-	if (vars->win_ptr)
-		ft_render_pov(vars);
+	ft_render_pov(vars, 0, 0);
 	return (0);
 }

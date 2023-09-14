@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:11:26 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/24 22:00:15 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/27 16:35:33 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,29 +52,23 @@ static void	ft_get_pov_range_x(t_vars *vars)
 	}
 }
 
-// calculate pov values and window size
+// calculate pov_max and starting_pov values and the window size
+// win wth and hgt are starting with the screen wth and hgt from the header.
+//the minimum values are for the text to be displayed on the screen
 void	ft_get_pov_values(t_vars *vars, int *win_wth, int *win_hgt)
 {
-	if (vars->map_hgt * IMG_HGT < SCREEN_HGT - IMG_HGT)
-	{
+	if (vars->map_hgt * IMG_HGT < *win_hgt)
 		*win_hgt = vars->map_hgt * IMG_HGT;
-		if (*win_hgt < 60)
-			*win_hgt = 60;
-		vars->pov_u_max = vars->map_hgt;
-	}
-	else
-		vars->pov_u_max = (*win_hgt / IMG_HGT) / 2;
-	if (vars->map_wth * IMG_WTH < SCREEN_WTH - IMG_WTH)
-	{
-		if (*win_wth < 120)
-			*win_wth = 120;
+	if (*win_hgt < 60)
+		*win_hgt = 60;
+	vars->pov_u_max = (*win_hgt / IMG_HGT) / 2;
+	vars->pov_d_max = (*win_hgt / IMG_HGT) - vars->pov_u_max;
+	if (vars->map_wth * IMG_WTH < *win_wth)
 		*win_wth = vars->map_wth * IMG_WTH;
-		vars->pov_l_max = vars->map_wth;
-	}
-	else
-		vars->pov_l_max = (*win_wth / IMG_WTH) / 2;
-	vars->pov_d_max = vars->pov_u_max;
-	vars->pov_r_max = vars->pov_l_max;
+	if (*win_wth < 120)
+		*win_wth = 120;
+	vars->pov_l_max = (*win_wth / IMG_WTH) / 2;
+	vars->pov_r_max = (*win_wth / IMG_WTH) - vars->pov_l_max;
 	if (vars->pov_u_max + vars->pov_d_max < vars->map_hgt)
 		ft_get_pov_range_y(vars);
 	if (vars->pov_l_max + vars->pov_r_max < vars->map_wth)
@@ -90,9 +84,10 @@ void	ft_change_pov_values_on_move(t_vars *vars, int y, int x)
 {
 	if (x != 0 && vars->pov_l_max + vars->pov_r_max < vars->map_wth)
 	{
-		if ((vars->pov_r < vars->pov_r_max || vars->pov_l < vars->pov_l_max
-				|| vars->p_pos_x + vars->pov_r > vars->map_wth
-				|| vars->p_pos_x - vars->pov_l < 0) && vars->pov_l + x >= 0)
+		if (vars->pov_l + x >= 0 && (vars->p_pos_x + vars->pov_r > vars->map_wth
+				|| vars->p_pos_x - vars->pov_l < 0
+				|| vars->pov_l < vars->pov_l_max
+				|| vars->pov_r < vars->pov_r_max))
 		{
 			vars->pov_l += x;
 			vars->pov_r = vars->pov_r_max + (vars->pov_l_max - vars->pov_l);
@@ -100,9 +95,10 @@ void	ft_change_pov_values_on_move(t_vars *vars, int y, int x)
 	}
 	if (y != 0 && vars->pov_u_max + vars->pov_d_max < vars->map_hgt)
 	{
-		if ((vars->pov_u < vars->pov_u_max || vars->pov_d < vars->pov_d_max
-				|| vars->p_pos_y + vars->pov_d > vars->map_hgt
-				|| vars->p_pos_y - vars->pov_u < 0) && vars->pov_u + y >= 0)
+		if (vars->pov_u + y >= 0 && (vars->p_pos_y + vars->pov_d > vars->map_hgt
+				|| vars->p_pos_y - vars->pov_u < 0
+				|| vars->pov_u < vars->pov_u_max
+				|| vars->pov_d < vars->pov_d_max))
 		{
 			vars->pov_u += y;
 			vars->pov_d = vars->pov_d_max + (vars->pov_u_max - vars->pov_u);

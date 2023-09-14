@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:17:56 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/24 22:21:44 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/27 16:12:29 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ static bool	ft_check_move(t_vars *vars, char *c)
 
 static bool	ft_mv_p(t_vars *vars, int y, int x)
 {
+	vars->animation_timer++;
 	if (ft_check_move(vars, &vars->map[y][x]) == false)
 		return (false);
 	vars->num_moves++;
@@ -78,7 +79,6 @@ int	ft_key_press(int key, t_vars *vars)
 		ft_close_game(vars);
 	else
 		return (1);
-	if (vars->win_ptr)
-		ft_render_pov(vars);
+	ft_render_pov(vars, 0, 0);
 	return (0);
 }

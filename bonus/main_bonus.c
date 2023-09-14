@@ -6,12 +6,15 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/08 20:22:47 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/24 22:08:48 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/27 19:28:45 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long_bonus.h"
 
+// 0L 		NoEventMask
+// (1L<<0) 	KeyPressMask
+// hooks are used to alter the behavior of the mlx
 bool	ft_game(t_vars *vars, int win_wth, int win_hgt)
 {	
 	vars->mlx_ptr = mlx_init();
@@ -20,20 +23,14 @@ bool	ft_game(t_vars *vars, int win_wth, int win_hgt)
 	ft_get_pov_values(vars, &win_wth, &win_hgt);
 	vars->win_ptr = mlx_new_window(vars->mlx_ptr, win_wth, win_hgt, "so_long");
 	if (!vars->win_ptr)
-	{
-		free(vars->mlx_ptr);
 		return (ft_error("MLX new window failed", 1));
-	}
 	if (ft_create_mlx_images(vars, IMG_WTH, IMG_HGT) == false)
 		return (false);
 	mlx_hook(vars->win_ptr, win_closed, 0L, ft_close_window_x, vars);
 	mlx_hook(vars->win_ptr, on_keydown, 1L << 0, ft_key_press, vars);
-	if (vars->win_ptr)
-	{
-		ft_render_pov(vars);
-		if (vars->amt_m == 1)
-			mlx_loop_hook(vars->mlx_ptr, ft_sprite, vars);
-	}
+	ft_render_pov(vars, 0, 0);
+	if (vars->amt_m == 1)
+		mlx_loop_hook(vars->mlx_ptr, ft_monster_animation, vars);
 	mlx_loop(vars->mlx_ptr);
 	return (true);
 }
@@ -57,25 +54,21 @@ bool	ft_check_map(char *map_name, t_vars *vars)
 	return (true);
 }
 
-//y == rows -> top down
+//y == rows -> top down 
 //x == collums -> left right
 int	main(int argc, char **argv)
 {
 	t_vars	*vars;
-	int		exit_code;
 
-	exit_code = 0;
 	if (argc != 2)
 		exit(ft_error_exit("Wrong input file", 1));
 	vars = malloc(sizeof(t_vars));
 	if (!vars)
-		exit(ft_error_exit("Malloc error", 1));
+		exit(ft_error_exit("Malloc error - t_vars node", 1));
 	ft_bzero(vars, sizeof(t_vars));
 	if (ft_check_map(argv[1], vars) == false)
-		exit_code = 1;
-	if (exit_code == 0 && ft_game(vars, SCREEN_WTH, SCREEN_HGT) == false)
-		exit_code = 1;
-	ft_free_map(vars, 0);
-	free (vars);
-	exit(exit_code);
+		vars->exit_code = 1;
+	if (vars->exit_code == 0 && ft_game(vars, SCREEN_WTH, SCREEN_HGT) == false)
+		vars->exit_code = 1;
+	ft_close_game(vars);
 }

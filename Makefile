@@ -6,7 +6,7 @@
 #    By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/08 21:07:24 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/20 20:27:25 by cmenke           ###   ########.fr        #
+#    Updated: 2023/04/27 16:39:36 by cmenke           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,10 +58,9 @@ MLXDIR := mlx
 
 MLXLIB := libmlx.a
 
-# INCLUDE := -L${LIBFTDIR} -l:${LIBFT}
 INCLUDE := ${LIBFTDIR}/${LIBFT} ${MLXDIR}/${MLXLIB} -framework OpenGL -framework AppKit
 
-# CFLAGS := -Wall -Werror -Wextra
+CFLAGS := -Wall -Werror -Wextra
 
 CC := cc
 

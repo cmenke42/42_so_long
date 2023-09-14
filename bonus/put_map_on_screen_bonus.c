@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 23:22:22 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/24 22:42:37 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/27 20:24:22 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,26 @@
 //added a line for monster
 bool	ft_create_mlx_images(t_vars *vars, int wth, int hgt)
 {
-	vars->path_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
+	vars->path_img = mlx_xpm_file_to_image(vars->mlx_ptr,
 			PATH_IMG, &wth, &hgt);
-	if (!vars->path_img.img_ptr)
-		return (ft_destroy_mlx_images(vars, true));
-	vars->wall_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
+	if (!vars->path_img)
+		return (ft_error("Error creating mlx images", 1));
+	vars->wall_img = mlx_xpm_file_to_image(vars->mlx_ptr,
 			WALL_IMG, &wth, &hgt);
-	if (!vars->wall_img.img_ptr)
-		return (ft_destroy_mlx_images(vars, true));
-	vars->monster_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
-			MONSTER_IMG, &wth, &hgt);
-	if (!vars->monster_img.img_ptr)
-		return (ft_destroy_mlx_images(vars, true));
-	vars->collect_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
-			COLLECT_IMG, &wth, &hgt);
-	if (!vars->collect_img.img_ptr)
-		return (ft_destroy_mlx_images(vars, true));
-	vars->player_img.img_ptr = mlx_xpm_file_to_image(vars->mlx_ptr,
+	if (!vars->wall_img)
+		return (ft_error("Error creating mlx images", 1));
+	vars->player_img = mlx_xpm_file_to_image(vars->mlx_ptr,
 			PLAYER_IMG, &wth, &hgt);
-	if (!vars->player_img.img_ptr)
-		return (ft_destroy_mlx_images(vars, true));
+	if (!vars->player_img)
+		return (ft_error("Error creating mlx images", 1));
+	vars->collect_img = mlx_xpm_file_to_image(vars->mlx_ptr,
+			COLLECT_IMG, &wth, &hgt);
+	if (!vars->collect_img)
+		return (ft_error("Error creating mlx images", 1));
+	vars->exit_img = mlx_xpm_file_to_image(vars->mlx_ptr,
+			EXIT_IMG, &wth, &hgt);
+	if (!vars->exit_img)
+		return (ft_error("Error creating mlx images", 1));
 	if (ft_create_mlx_images_monster(vars, wth, hgt) == false)
 		return (false);
 	return (true);
@@ -47,7 +47,7 @@ void	ft_put_movement_counter(t_vars *vars, int num_moves)
 	string = ft_itoa(num_moves);
 	if (!string)
 	{
-		vars->exit_code = ft_error_exit("Malloc error", 1);
+		vars->exit_code = ft_error_exit("Malloc error - movement counter", 1);
 		ft_close_game(vars);
 	}
 	mlx_string_put(vars->mlx_ptr, vars->win_ptr, 0, 15, 16777215, "Move:");
@@ -62,44 +62,53 @@ static void	ft_put_imgage(t_vars *vars, char c, int y, int x)
 
 	mlx = vars->mlx_ptr;
 	win = vars->win_ptr;
-	vars->exit_vis = false;
 	if (c == '0')
-		mlx_put_image_to_window(mlx, win, vars->path_img.img_ptr, x, y);
+		mlx_put_image_to_window(mlx, win, vars->path_img, x, y);
 	else if (c == '1')
-		mlx_put_image_to_window(mlx, win, vars->wall_img.img_ptr, x, y);
+		mlx_put_image_to_window(mlx, win, vars->wall_img, x, y);
 	else if (c == 'C')
-		mlx_put_image_to_window(mlx, win, vars->collect_img.img_ptr, x, y);
+		mlx_put_image_to_window(mlx, win, vars->collect_img, x, y);
 	else if (c == 'M')
-		mlx_put_image_to_window(mlx, win, vars->monster_img.img_ptr, x, y);
-	else if (c == 'P')
-		mlx_put_image_to_window(mlx, win, vars->player_img.img_ptr, x, y);
+		ft_animation(vars, y, x);
 	else if (c == 'E')
-		vars->exit_vis = true;
+		mlx_put_image_to_window(mlx, win, vars->exit_img, x, y);
+	else if (c == 'P')
+		mlx_put_image_to_window(mlx, win, vars->player_img, x, y);
 	ft_put_movement_counter(vars, vars->num_moves);
 }
 
-int	ft_render_pov(t_vars *vars)
+void	ft_calculate_pov_offset(t_vars *vars, int *y, int *x)
+{
+	if (vars->pov_u != 0 && vars->p_pos_y - vars->pov_u >= 0)
+		*y = vars->p_pos_y - vars->pov_u;
+	else
+		*y = 0;
+	if (vars->pov_l != 0 && vars->p_pos_x - vars->pov_l >= 0)
+			*x = vars->p_pos_x - vars->pov_l;
+	else
+			*x = 0;
+}
+
+int	ft_render_pov(t_vars *vars, int y_orig, int x_orig)
 {
 	int	y;
 	int	x;
 	int	i;
 	int	j;
 
+	ft_calculate_pov_offset(vars, &y_orig, &x_orig);
 	i = 0;
-	if (vars->pov_u != 0 && vars->p_pos_y - vars->pov_u >= 0)
-		y = vars->p_pos_y - vars->pov_u;
-	else
-		y = 0;
-	while (y >= 0 && y < vars->map_hgt && i < vars->pov_u_max + vars->pov_d_max)
+	y = y_orig;
+	while (i < vars->map_hgt && i < vars->pov_u_max + vars->pov_d_max)
 	{
-		if (vars->pov_l != 0 && vars->p_pos_x - vars->pov_l >= 0)
-			x = vars->p_pos_x - vars->pov_l;
-		else
-			x = 0;
 		j = 0;
-		while (x >= 0 && x < vars->map_wth
-			&& j < vars->pov_l_max + vars->pov_r_max)
-			ft_put_imgage(vars, vars->map[y][x++], i * IMG_HGT, j++ * IMG_WTH);
+		x = x_orig;
+		while (j < vars->map_wth && j < vars->pov_l_max + vars->pov_r_max)
+		{
+			ft_put_imgage(vars, vars->map[y][x], i * IMG_HGT, j * IMG_WTH);
+			j++;
+			x++;
+		}
 		i++;
 		y++;
 	}

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: user <user@student.42.fr>                  +#+  +:+       +#+         #
+#    By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/13 09:41:00 by cmenke            #+#    #+#              #
-#    Updated: 2023/04/13 18:49:16 by user             ###   ########.fr        #
+#    Updated: 2023/04/27 20:35:25 by cmenke           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,9 +14,9 @@
 #ar -c -> silence the information message.
 #ar -s -> adds or updates an onject-file index to the archive.
 
-NAME = libft.a
+NAME := libft.a
 
-SRC = ft_isalpha.c \
+SRC := ft_isalpha.c \
 	ft_isdigit.c \
 	ft_isalnum.c \
 	ft_isascii.c \
@@ -62,13 +62,13 @@ SRC = ft_isalpha.c \
 	ft_printf.c \
 	get_next_line.c
 
-OBJS = ${SRC:.c=.o}
+OBJS := ${SRC:.c=.o}
 
-HEADER = libft.h
+HEADER := libft.h
 
-CC = cc
+CC := cc
 
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS := -Wall -Werror -Wextra
 
 all :	${NAME}
 
@@ -86,3 +86,5 @@ fclean:	clean
 re: fclean all
 
 .PHONY: all clean fclean re
+
+.NOTPARALLEL:

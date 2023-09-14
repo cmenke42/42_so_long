@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 22:49:38 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 01:27:32 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/27 16:16:33 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static bool	ft_do_direction(t_vars *vars, t_lst **pos_queue, int y, int x)
 		if (!temp)
 		{
 			ft_clear_lst(pos_queue);
-			return (ft_error("Malloc error", 1));
+			return (ft_error("Malloc error - ft_do_direction t_lst *temp", 1));
 		}
 		ft_node_add_back(pos_queue, temp);
 	}
@@ -73,7 +73,7 @@ bool	ft_find_path(t_vars *vars)
 
 	pos_queue = ft_new_node(vars->p_pos_y, vars->p_pos_x);
 	if (!pos_queue)
-		return (ft_error("Malloc error", 1));
+		return (ft_error("Malloc error - t_lst	*pos_queue", 1));
 	while (pos_queue)
 	{
 		if (ft_check_dir(vars, pos_queue->y, pos_queue->x, &pos_queue) == false)
@@ -96,7 +96,7 @@ bool	ft_copy_map(t_vars *vars)
 
 	vars->map_cpy = (char **)malloc((vars->map_hgt + 1) * sizeof(char *));
 	if (!vars->map_cpy)
-		return (ft_error("Malloc error", 1));
+		return (ft_error("Malloc error - vars->map_cpy", 1));
 	y = 0;
 	while (vars->map[y])
 	{
@@ -104,7 +104,7 @@ bool	ft_copy_map(t_vars *vars)
 		if (!vars->map_cpy[y])
 		{
 			ft_free_map(vars, 1);
-			return (ft_error("Malloc error", 1));
+			return (ft_error("Malloc error - duplicating map lines", 1));
 		}
 		y++;
 	}

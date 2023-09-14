@@ -6,7 +6,7 @@
 /*   By: cmenke <cmenke@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 22:58:13 by cmenke            #+#    #+#             */
-/*   Updated: 2023/04/19 03:11:03 by cmenke           ###   ########.fr       */
+/*   Updated: 2023/04/27 20:16:08 by cmenke           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static bool	ft_valid_char(char c, t_vars *vars, int y, int x)
 {
 	if (c == '0' || c == '1')
 		return (true);
-	if (c == 'M')
+	else if (c == 'M')
 		vars->amt_m = 1;
 	else if (c == 'C')
 		vars->amt_c++;
@@ -42,6 +42,8 @@ static bool	ft_valid_char(char c, t_vars *vars, int y, int x)
 	return (true);
 }
 
+//checks if the map is surrounded by '1' and if there are only valid chars.
+//and if the lines are of the same length
 static bool	ft_check_map_lines(t_vars *vars, int y, int x)
 {
 	while (vars->map[y])
@@ -51,7 +53,7 @@ static bool	ft_check_map_lines(t_vars *vars, int y, int x)
 			return (ft_error("Not surrounded by '1'", 1));
 		while (vars->map[y][x] && vars->map[y][x] != '\n')
 		{
-			if (x == 0 || y + 1 == vars->map_hgt)
+			if (y == 0 || y + 1 == vars->map_hgt)
 			{
 				if (vars->map[y][x] != '1')
 					return (ft_error("Not surrounded by '1'", 1));
@@ -76,16 +78,17 @@ bool	ft_check_map_chars(t_vars *vars)
 	if (ft_check_map_lines(vars, 0, 0) == false)
 		return (false);
 	if (vars->amt_e != 1 || vars->amt_p != 1 || vars->amt_c < 1)
-		return (ft_error("Wrong ammount of E P or C", 1));
+		return (ft_error("Wrong ammount of E, P or C", 1));
 	return (true);
 }
 
+//compares the 4 last characters of map_name with ".ber"
 bool	ft_check_map_name(char *map_name)
 {
 	int	name_len;
 
 	name_len = ft_strlen(map_name);
-	if (name_len > 4)
+	if (name_len >= 4)
 	{
 		if (ft_strncmp(map_name + (name_len - 4), ".ber", 4) == 0)
 			return (true);
